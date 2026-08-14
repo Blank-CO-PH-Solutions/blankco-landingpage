@@ -1,1 +1,79 @@
+@import "@fontsource/poppins";
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --color-ink: #0a0a0a;
+  --color-paper: #fafafa;
+  --color-line: #d4d4d4;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+.page-enter-right {
+  animation: slide-in-right 0.4s ease;
+}
+
+.page-enter-left {
+  animation: slide-in-left 0.4s ease;
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-left {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.pattern-grid {
+  background-image:
+    linear-gradient(to right, rgba(10, 10, 10, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(10, 10, 10, 0.06) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.pattern-grid-inverse {
+  background-image:
+    linear-gradient(to right, rgba(250, 250, 250, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(250, 250, 250, 0.07) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.pattern-diagonal {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(10, 10, 10, 0.05) 0,
+    rgba(10, 10, 10, 0.05) 1px,
+    transparent 1px,
+    transparent 12px
+  );
+}
+
+.pattern-diagonal-inverse {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(250, 250, 250, 0.06) 0,
+    rgba(250, 250, 250, 0.06) 1px,
+    transparent 1px,
+    transparent 12px
+  );
+}
