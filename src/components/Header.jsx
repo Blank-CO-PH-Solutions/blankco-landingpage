@@ -16,8 +16,10 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-paper/90 backdrop-blur">
       <nav className="mx-auto flex max-w-6xl items-center justify-between gap-8 px-6 py-4">
-        <Link id="brand" to="/" className="shrink-0 text-xl font-bold tracking-tight">
-          Blank CO<span className="text-neutral-400">.</span>
+        <Link id="brand" to="/" className="shrink-0 leading-none">
+          <span className="block text-xl font-bold tracking-tight">Blank CO<span className="text-neutral-400">.</span></span>
+          <span className="block h-px w-full bg-current my-1" />
+          <span className="block text-xs font-semibold uppercase tracking-widest text-neutral-500">PH Solutions</span>
         </Link>
 
         <ul className="hidden flex-1 items-center justify-center gap-8 text-sm font-medium sm:flex">

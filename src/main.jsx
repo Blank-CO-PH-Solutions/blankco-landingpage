@@ -7,6 +7,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import LandingPage from './pages/LandingPage.jsx'
 import AboutPage from './pages/AboutPage.jsx'
 import ServicesPage from './pages/ServicesPage.jsx'
+import ServiceDetailPage from './pages/ServiceDetailPage.jsx'
 import ContactUsPage from './pages/ContactUsPage.jsx'
 
 createRoot(document.getElementById('root')).render(
@@ -17,6 +18,7 @@ createRoot(document.getElementById('root')).render(
           <Route index element={<LandingPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/services" element={<ServicesPage />} />
+          <Route path="/services/:slug" element={<ServiceDetailPage />} />
           <Route path="/contact-us" element={<ContactUsPage />} />
         </Route>
       </Routes>

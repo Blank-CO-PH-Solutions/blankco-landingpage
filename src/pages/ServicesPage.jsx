@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { services } from '../data/services'
 
 export default function ServicesPage() {
@@ -10,9 +11,10 @@ export default function ServicesPage() {
       </p>
       <div className="mt-16 grid gap-px border border-line bg-line sm:grid-cols-2">
         {services.map((service) => (
-          <div
+          <Link
             key={service.number}
-            className="group relative bg-paper p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-[8px_8px_0_0_#0a0a0a] sm:p-10"
+            to={`/services/${service.slug}`}
+            className="group relative block bg-paper p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-[8px_8px_0_0_#0a0a0a] sm:p-10"
           >
             <p className="text-sm font-semibold tracking-widest text-neutral-400 transition-colors duration-300 group-hover:text-neutral-200">
               {service.number}
@@ -26,7 +28,7 @@ export default function ServicesPage() {
             <p className="mt-3 text-neutral-500 transition-colors duration-300 group-hover:text-neutral-300">
               {service.text}
             </p>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

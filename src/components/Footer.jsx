@@ -13,8 +13,10 @@ export default function Footer() {
     <footer className="border-t border-line bg-ink text-paper">
       <div className="mx-auto grid max-w-6xl gap-10 px-6 py-12 sm:grid-cols-2 lg:grid-cols-4">
         <div>
-          <p className="text-xl font-bold tracking-tight">
-            Blank CO<span className="text-paper/40">.</span>
+          <p className="leading-none">
+            <span className="block text-xl font-bold tracking-tight">Blank CO<span className="text-paper/40">.</span></span>
+            <span className="block h-px w-full bg-paper/40 my-1" />
+            <span className="block text-xs font-semibold uppercase tracking-widest text-paper/50">PH Solutions</span>
           </p>
           <p className="mt-4 text-sm text-paper/60">
             A student-led digital solutions team from San Jose, Baggao, Cagayan, Philippines.
@@ -39,7 +41,7 @@ export default function Footer() {
           <ul className="mt-4 space-y-2 text-sm">
             {services.map((service) => (
               <li key={service.number}>
-                <Link to="/services" className="text-paper/70 transition hover:text-paper">
+                <Link to={`/services/${service.slug}`} className="text-paper/70 transition hover:text-paper">
                   {service.title}
                 </Link>
               </li>
