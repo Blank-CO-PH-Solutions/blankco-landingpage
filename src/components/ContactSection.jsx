@@ -14,10 +14,10 @@ export default function ContactSection() {
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
             <a
-              href="mailto:hello@blankco.ph"
+              href="mailto:blankco.ph@gmail.com"
               className="bg-ink px-8 py-3 text-sm font-semibold uppercase tracking-widest text-paper transition hover:bg-neutral-800"
             >
-              hello@blankco.ph
+              blankco.ph@gmail.com
             </a>
             <a
               href="tel:+630000000000"
@@ -29,7 +29,7 @@ export default function ContactSection() {
           <div className="mt-12 grid gap-px border border-line bg-line">
             <div className="bg-paper p-6">
               <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500">Email</p>
-              <p className="mt-2 font-medium">hello@blankco.ph</p>
+              <p className="mt-2 font-medium">blankco.ph@gmail.com</p>
             </div>
             <div className="bg-paper p-6">
               <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500">Phone</p>

@@ -21,7 +21,7 @@ function App() {
         : ''
     )
     setPrevPath(location.pathname)
-  }
+  } 
 
   return (
     <div className="flex min-h-screen flex-col overflow-x-hidden">

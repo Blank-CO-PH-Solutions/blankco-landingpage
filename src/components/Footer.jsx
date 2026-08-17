@@ -52,7 +52,7 @@ export default function Footer() {
         <div>
           <p className="text-xs font-semibold uppercase tracking-widest text-paper/50">Contact</p>
           <ul className="mt-4 space-y-2 text-sm text-paper/70">
-            <li>hello@blankco.ph</li>
+            <li>blankco.ph@gmail.com</li>
             <li>+63 (0) 000 000 0000</li>
             <li>Baggao, Cagayan, Philippines</li>
           </ul>
