@@ -28,7 +28,7 @@ export default function ContactForm() {
             type="text"
             required
             className="mt-2 w-full border border-line bg-paper px-4 py-3 focus:border-ink focus:outline-none"
-            placeholder="Juan dela Cruz"
+            placeholder="Your name"
           />
         </div>
         <div>

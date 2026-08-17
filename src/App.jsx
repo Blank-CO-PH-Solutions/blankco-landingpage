@@ -26,7 +26,7 @@ function App() {
   return (
     <div className="flex min-h-screen flex-col overflow-x-hidden">
       <Header />
-      <main className="flex-1">
+      <main className="flex-1 pt-[76px]">
         <div key={location.pathname} className={direction}>
           <Outlet />
         </div>

@@ -14,7 +14,7 @@ export default function Header() {
   const close = () => setOpen(false)
 
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-paper/90 backdrop-blur">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-line bg-paper/90 backdrop-blur">
       <nav className="mx-auto flex max-w-6xl items-center justify-between gap-8 px-6 py-4">
         <Link id="brand" to="/" className="shrink-0 leading-none">
           <span className="block text-xl font-bold tracking-tight">Blank CO<span className="text-neutral-400">.</span></span>

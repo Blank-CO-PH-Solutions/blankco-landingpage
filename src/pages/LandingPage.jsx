@@ -226,6 +226,18 @@ export default function LandingPage() {
         </div>
       </section>
 
+      <section className="border-b border-line">
+        <div className="mx-auto max-w-3xl px-6 py-24 text-center">
+          <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500">Our promise</p>
+          <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-5xl">
+            If it isn&apos;t solved, we aren&apos;t done.
+          </h2>
+          <p className="mt-6 text-lg text-neutral-500">
+            Straight answers, real results, done right.
+          </p>
+        </div>
+      </section>
+
       <section id="contact" className="pattern-grid border-b border-line">
         <ContactSection />
       </section>
