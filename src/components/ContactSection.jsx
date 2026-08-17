@@ -5,12 +5,12 @@ export default function ContactSection() {
     <div className="mx-auto max-w-6xl px-6 py-24">
       <div className="grid gap-16 lg:grid-cols-2">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500">Got a problem?</p>
+          <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500">Let&apos;s talk</p>
           <h2 className="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">
-            Hand it to us. We&apos;ll handle it.
+            Tell us what you&apos;re working on.
           </h2>
           <p className="mt-6 max-w-md text-neutral-500">
-            Tell us what&apos;s broken, stuck, or missing. We&apos;ll come back with a plan — and a fix.
+            Share the challenge, the opportunity, or the idea. We&apos;ll help you decide whether Blank CO is the right partner for the next step.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
             <a
@@ -37,7 +37,7 @@ export default function ContactSection() {
             </div>
             <div className="bg-paper p-6">
               <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500">Location</p>
-              <p className="mt-2 font-medium">Manila, Philippines</p>
+              <p className="mt-2 font-medium">San Jose, Baggao, Cagayan, Philippines</p>
             </div>
           </div>
         </div>

@@ -4,63 +4,60 @@ import { services } from '../data/services'
 import ContactSection from '../components/ContactSection'
 
 const values = [
-  { title: 'Straight answers', text: 'No fluff, no jargon. You always know exactly what\'s happening and why.' },
-  { title: 'Done right', text: 'We take ownership of the outcome, not just the task. If it isn\'t solved, we aren\'t done.' },
-  { title: 'Built to last', text: 'Solutions that are durable, maintainable, and make sense for the long haul.' },
+  { title: 'Clear thinking', text: 'We make the work understandable: what matters, what comes next, and why.' },
+  { title: 'Practical delivery', text: 'We focus on useful progress, not presentations or unnecessary complexity.' },
+  { title: 'Built for the next step', text: 'Our work is designed to be manageable today and adaptable as your business grows.' },
 ]
 
 const stats = [
-  { value: '0', label: 'Problems solved' },
-  { value: '0', label: 'Client satisfaction' },
-  { value: '24/7', label: 'On-call support' },
-  { value: '0', label: 'Years of experience' },
+  { value: 'PH', label: 'Philippine-based' },
+  { value: 'BSIT', label: 'Third-year students' },
+  { value: 'Remote', label: 'Built to collaborate' },
+  { value: 'Baggao', label: 'Cagayan, Philippines' },
 ]
 
 const steps = [
-  { number: '01', title: 'Listen', text: 'We hear you out. No assumptions, no jumping ahead.' },
-  { number: '02', title: 'Diagnose', text: 'We find the real root of the problem, not just the symptoms.' },
-  { number: '03', title: 'Fix', text: 'We solve it, test it, and make sure it holds.' },
-  { number: '04', title: 'Support', text: 'We stay close so the problem stays gone.' },
+  { number: '01', title: 'Discover', text: 'We learn the context, constraints, and outcome that matters most.' },
+  { number: '02', title: 'Define', text: 'We turn insights into a focused scope, clear priorities, and a workable plan.' },
+  { number: '03', title: 'Build', text: 'We create, test, and refine the solution with your team in the loop.' },
+  { number: '04', title: 'Improve', text: 'We support the handover and identify the next opportunities to make it better.' },
 ]
 
-const testimonials = [
+const expectations = [
   {
-    quote: 'They took a system that had been breaking for months and had it running smoothly within a week.',
-    name: 'Maria Santos',
-    role: 'Operations Manager',
+    title: 'A shared understanding',
+    text: 'We start by getting close to the problem before recommending a solution.',
   },
   {
-    quote: 'No jargon, no delays. We told them the problem and they just handled it. That never happens.',
-    name: 'Andres Reyes',
-    role: 'Founder, Retail Co.',
+    title: 'Work you can follow',
+    text: 'You will have visibility into priorities, progress, and the decisions along the way.',
   },
   {
-    quote: 'The kind of team that actually treats your problem like it\'s their own. We won\'t work with anyone else.',
-    name: 'Liza Fernandez',
-    role: 'Finance Director',
+    title: 'A useful outcome',
+    text: 'Every recommendation and deliverable should make a real difference to your business.',
   },
 ]
 
 const faqs = [
   {
-    q: 'What kinds of problems do you solve?',
-    a: 'Strategy, broken systems, automation, digital tools, websites, and anything that quietly eats your time. If it\'s stuck or broken, chances are we\'ve fixed something like it before.',
+    q: 'What can Blank CO help with?',
+    a: 'We work on business strategy, workflow automation, websites, digital tools, and the operating challenges around them. If your team has outgrown a process or needs a better way to work, let’s talk.',
   },
   {
     q: 'How fast can you start?',
-    a: 'Most projects kick off within a few days of the first call. Urgent problems get moved to the front of the line.',
+    a: 'After an introductory conversation, we will confirm fit, scope, and availability. Timelines depend on the work, but we will always set expectations clearly before we begin.',
   },
   {
-    q: 'What if the problem can\'t be fixed?',
-    a: 'We tell you honestly. If it can\'t be fixed, we\'ll tell you why and show you the best way forward — even if that isn\'t with us.',
+    q: 'What if we are not the right fit?',
+    a: 'We will be upfront about it. If another approach, partner, or platform makes more sense, we will say so and help you understand the options.',
   },
   {
     q: 'How do you charge?',
-    a: 'Per project or per month, depending on what you need. You get the number up front, before we start. No surprise invoices.',
+    a: 'Engagements can be scoped by project or arranged as ongoing support. You will receive a clear proposal and pricing before any work starts.',
   },
   {
     q: 'Do you work outside the Philippines?',
-    a: 'Yes. Most of our work happens remotely, so timezone and location aren\'t a problem.',
+    a: 'Yes. We are based in San Jose, Baggao, Cagayan, Philippines, and can collaborate remotely with teams wherever a strong working rhythm can be established.',
   },
 ]
 
@@ -98,24 +95,24 @@ export default function LandingPage() {
             Blank CO PH Solutions
           </p>
           <h1 className="max-w-4xl text-5xl font-bold leading-tight tracking-tight sm:text-7xl">
-            We Solve Your
-            <span className="block bg-paper text-ink px-4 py-1 inline-block mt-2">Problems.</span>
+            Make the work
+            <span className="block bg-paper text-ink px-4 py-1 inline-block mt-2">work better.</span>
           </h1>
           <p className="mt-8 max-w-xl text-lg text-paper/70">
-            No matter the mess, the headache, or the deadline — we show up, figure it out, and get it done. Clean and simple.
+            We are third-year BSIT students from Saint Joseph College of Baggao, creating practical digital solutions for teams in the Philippines and beyond.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
             <a
               href="#contact"
               className="bg-paper px-8 py-3 text-sm font-semibold uppercase tracking-widest text-ink transition hover:bg-neutral-200"
             >
-              Get in touch
+              Start a conversation
             </a>
             <a
               href="#services"
               className="border border-paper/50 px-8 py-3 text-sm font-semibold uppercase tracking-widest text-paper transition hover:bg-paper/10"
             >
-              Our services
+              Explore services
             </a>
           </div>
         </div>
@@ -134,7 +131,7 @@ export default function LandingPage() {
         <div className="mx-auto max-w-6xl px-6 py-24">
           <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500">What we do</p>
           <h2 className="mt-4 max-w-2xl text-4xl font-bold tracking-tight sm:text-5xl">
-            A problem in, a solution out.
+            The right support for the work ahead.
           </h2>
           <div className="mt-16 grid gap-px bg-line sm:grid-cols-2">
             {services.map((service) => (
@@ -164,7 +161,7 @@ export default function LandingPage() {
         <div className="mx-auto max-w-6xl px-6 py-24">
           <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500">How we work</p>
           <h2 className="mt-4 max-w-2xl text-4xl font-bold tracking-tight sm:text-5xl">
-            Four steps. No surprises.
+            A clear path from challenge to progress.
           </h2>
           <div className="mt-16 grid gap-px bg-line sm:grid-cols-2 lg:grid-cols-4">
             {steps.map((step) => (
@@ -195,18 +192,15 @@ export default function LandingPage() {
 
       <section className="border-b border-line">
         <div className="mx-auto max-w-6xl px-6 py-24">
-          <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500">What clients say</p>
+          <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500">What to expect</p>
           <h2 className="mt-4 max-w-2xl text-4xl font-bold tracking-tight sm:text-5xl">
-            Don&apos;t take our word for it.
+            A better way to work together.
           </h2>
           <div className="mt-16 grid gap-px border border-line bg-line sm:grid-cols-3">
-            {testimonials.map((t) => (
-              <div key={t.name} className="flex flex-col justify-between bg-paper p-8 sm:p-10">
-                <p className="text-lg font-medium leading-relaxed">&ldquo;{t.quote}&rdquo;</p>
-                <div className="mt-8">
-                  <p className="font-semibold">{t.name}</p>
-                  <p className="mt-1 text-sm uppercase tracking-widest text-neutral-500">{t.role}</p>
-                </div>
+            {expectations.map((expectation) => (
+              <div key={expectation.title} className="flex flex-col justify-between bg-paper p-8 sm:p-10">
+                <p className="text-lg font-semibold leading-relaxed">{expectation.title}</p>
+                <p className="mt-4 text-neutral-500">{expectation.text}</p>
               </div>
             ))}
           </div>
@@ -217,7 +211,7 @@ export default function LandingPage() {
         <div className="mx-auto max-w-6xl px-6 py-24">
           <p className="text-xs font-semibold uppercase tracking-widest text-paper/50">Why Blank CO</p>
           <h2 className="mt-4 max-w-2xl text-4xl font-bold tracking-tight sm:text-5xl">
-            No runaround. Just results.
+            Thoughtful support, built around your business.
           </h2>
           <div className="mt-16 grid gap-12 sm:grid-cols-3">
             {values.map((value) => (
@@ -239,7 +233,7 @@ export default function LandingPage() {
         <div className="mx-auto max-w-3xl px-6 py-24">
           <p className="text-center text-xs font-semibold uppercase tracking-widest text-neutral-500">Questions</p>
           <h2 className="mt-4 text-center text-4xl font-bold tracking-tight sm:text-5xl">
-            Before you ask.
+            Common questions.
           </h2>
           <div className="mt-16 space-y-4">
             {faqs.map((faq) => (
@@ -252,14 +246,14 @@ export default function LandingPage() {
       <section className="pattern-diagonal-inverse bg-ink text-paper">
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-8 px-6 py-20 text-center sm:flex-row sm:justify-between sm:text-left">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-paper/50">Ready when you are</p>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight">Stuck on something right now?</h2>
+            <p className="text-xs font-semibold uppercase tracking-widest text-paper/50">Let’s get started</p>
+            <h2 className="mt-3 text-3xl font-bold tracking-tight">Have a challenge worth solving?</h2>
           </div>
           <Link
             to="/contact-us"
             className="shrink-0 bg-paper px-8 py-3 text-sm font-semibold uppercase tracking-widest text-ink transition hover:bg-neutral-200"
           >
-            Start a project
+            Talk to our team
           </Link>
         </div>
       </section>

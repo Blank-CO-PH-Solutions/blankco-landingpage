@@ -6,7 +6,7 @@ export default function ServicesPage() {
       <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500">What we do</p>
       <h1 className="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">Our services</h1>
       <p className="mt-6 max-w-2xl text-neutral-500">
-        Every engagement is the same: understand the problem, own it, and deliver a solution that actually works.
+        We combine business context with hands-on delivery, so every engagement moves from a clear question to useful, measurable progress.
       </p>
       <div className="mt-16 grid gap-px border border-line bg-line sm:grid-cols-2">
         {services.map((service) => (

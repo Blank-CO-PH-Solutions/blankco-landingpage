@@ -6,8 +6,8 @@ export default function ContactForm() {
   if (submitted) {
     return (
       <div className="border border-line bg-ink p-10 text-paper">
-        <h2 className="text-2xl font-semibold">Got it. We&apos;re on it.</h2>
-        <p className="mt-3 text-paper/60">Someone from the team will reach out shortly.</p>
+        <h2 className="text-2xl font-semibold">Thanks for reaching out.</h2>
+        <p className="mt-3 text-paper/60">A member of our team will be in touch soon.</p>
       </div>
     )
   }
@@ -43,20 +43,20 @@ export default function ContactForm() {
         </div>
       </div>
       <div>
-        <label htmlFor="problem" className="text-sm font-medium uppercase tracking-widest text-neutral-500">The problem</label>
+        <label htmlFor="problem" className="text-sm font-medium uppercase tracking-widest text-neutral-500">How can we help?</label>
         <textarea
           id="problem"
           required
           rows={6}
           className="mt-2 w-full resize-none border border-line bg-paper px-4 py-3 focus:border-ink focus:outline-none"
-          placeholder="What's broken, stuck, or missing?"
+          placeholder="Tell us a little about your business and what you would like to improve."
         />
       </div>
       <button
         type="submit"
         className="w-full bg-ink px-8 py-4 text-sm font-semibold uppercase tracking-widest text-paper transition hover:bg-neutral-800"
       >
-        Send it over
+        Send inquiry
       </button>
     </form>
   )

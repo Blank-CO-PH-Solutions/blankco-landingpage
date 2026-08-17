@@ -17,8 +17,7 @@ export default function Footer() {
             Blank CO<span className="text-paper/40">.</span>
           </p>
           <p className="mt-4 text-sm text-paper/60">
-            We solve your problems. Strategy, automation, digital tools, and
-            support — done right.
+            A student-led digital solutions team from San Jose, Baggao, Cagayan, Philippines.
           </p>
         </div>
 
@@ -53,7 +52,7 @@ export default function Footer() {
           <ul className="mt-4 space-y-2 text-sm text-paper/70">
             <li>hello@blankco.ph</li>
             <li>+63 (0) 000 000 0000</li>
-            <li>Manila, Philippines</li>
+            <li>Baggao, Cagayan, Philippines</li>
           </ul>
         </div>
       </div>
@@ -61,7 +60,7 @@ export default function Footer() {
       <div className="border-t border-paper/10">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-6 py-5 text-xs text-paper/50 sm:flex-row">
           <p>&copy; {new Date().getFullYear()} Blank CO PH Solutions. All rights reserved.</p>
-          <p className="uppercase tracking-widest">We solve your problems.</p>
+          <p className="uppercase tracking-widest">Clear thinking. Better work.</p>
         </div>
       </div>
     </footer>
