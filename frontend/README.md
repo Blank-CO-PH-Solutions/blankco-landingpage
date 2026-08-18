@@ -2,7 +2,7 @@
 
 **We Solve Your Problems.**
 
-Blank CO PH Solutions is a Manila-based company that takes ownership of broken, stuck, or missing systems — strategy, automation, digital tools, and support — and delivers solutions that actually work. No runaround, just results.
+Blank CO PH Solutions is a Cagayan-based company that takes ownership of broken, stuck, or missing systems — strategy, automation, digital tools, and support — and delivers solutions that actually work. No runaround, just results.
 
 ## What we provide
 
@@ -27,5 +27,6 @@ Four steps, no surprises:
 If it isn't solved, we aren't done. Straight answers, real results, done right.
 
 ## Contact
-- Location: Manila, Philippines
+
+- Location: San Jose, Baggao, Cagayn, Philippines
 - Availability: Most work happens remotely, so timezone and location aren't a problem. On-call support available 24/7.
