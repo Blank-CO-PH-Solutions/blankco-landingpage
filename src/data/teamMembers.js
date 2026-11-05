@@ -27,11 +27,14 @@ export async function saveTeamMember(member) {
   const payload = {
     name: member.name.trim(),
     position: member.position.trim(),
+    email: member.email?.trim() || null,
+    location: member.location?.trim() || null,
     github_url: member.github_url.trim(),
     portfolio_url: member.portfolio_url?.trim() || null,
     avatar_url: member.avatar_url?.trim() || null,
     bio: member.bio?.trim() || '',
     skills: Array.isArray(member.skills) ? [...new Set(member.skills.map((skill) => skill.trim()).filter(Boolean))] : [],
+    education: Array.isArray(member.education) ? member.education.filter((item) => item.institution || item.qualification) : [],
     sort_order: Number(member.sort_order) || 0,
     is_published: member.is_published,
   }

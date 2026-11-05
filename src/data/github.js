@@ -43,3 +43,34 @@ export function githubRepositoryToProject(repository) {
     live_site_url: repository.homepage,
   }
 }
+
+export async function fetchGithubProfile(githubUrl) {
+  let url
+  try {
+    url = new URL(githubUrl.trim())
+  } catch {
+    throw new Error('Enter a valid GitHub profile URL.')
+  }
+
+  const [username] = url.pathname.split('/').filter(Boolean)
+  if (url.protocol !== 'https:' || url.hostname !== 'github.com' || !username || url.pathname.split('/').filter(Boolean).length !== 1) {
+    throw new Error('Use a profile URL in the format https://github.com/username.')
+  }
+
+  const response = await fetch(`https://api.github.com/users/${encodeURIComponent(username)}`, {
+    headers: { Accept: 'application/vnd.github+json' },
+  })
+  if (response.status === 404) throw new Error('That public GitHub profile could not be found.')
+  if (response.status === 403) throw new Error('GitHub API rate limit reached. Try again later.')
+  if (!response.ok) throw new Error('GitHub could not load that profile. Try again.')
+
+  const profile = await response.json()
+  return {
+    name: profile.name || '',
+    email: profile.email || '',
+    location: profile.location || '',
+    bio: profile.bio || '',
+    avatar_url: profile.avatar_url || '',
+    github_url: profile.html_url,
+  }
+}

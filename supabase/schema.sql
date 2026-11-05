@@ -42,11 +42,14 @@ create table if not exists public.team_members (
   id uuid primary key default gen_random_uuid(),
   name text not null check (char_length(btrim(name)) between 1 and 80),
   position text not null check (char_length(btrim(position)) between 1 and 100),
+  email text,
+  location text,
   github_url text not null check (github_url ~ '^https://github[.]com/[A-Za-z0-9-]+/?$'),
   portfolio_url text check (portfolio_url is null or portfolio_url ~ '^https://'),
   avatar_url text check (avatar_url is null or avatar_url ~ '^https://'),
   bio text not null default '' check (char_length(bio) <= 500),
   skills text[] not null default '{}',
+  education jsonb not null default '[]'::jsonb check (jsonb_typeof(education) = 'array'),
   sort_order integer not null default 0,
   is_published boolean not null default true,
   created_at timestamptz not null default now(),
@@ -54,6 +57,9 @@ create table if not exists public.team_members (
 );
 
 alter table public.team_members add column if not exists skills text[] not null default '{}';
+alter table public.team_members add column if not exists email text;
+alter table public.team_members add column if not exists location text;
+alter table public.team_members add column if not exists education jsonb not null default '[]'::jsonb;
 
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('team-avatars', 'team-avatars', true, 5242880, array['image/jpeg', 'image/png', 'image/webp'])

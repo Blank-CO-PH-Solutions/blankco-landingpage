@@ -16,7 +16,7 @@ import {
 import { Link } from 'react-router-dom'
 import { deleteMessage, listMessages, setMessageRead } from '../data/messages'
 import { deleteProject, listProjects, saveProject as saveProjectRecord, updateProject } from '../data/projects'
-import { githubRepositoryToProject, listGithubRepositories } from '../data/github'
+import { fetchGithubProfile, githubRepositoryToProject, listGithubRepositories } from '../data/github'
 import { deleteTeamMember, getGithubAvatarUrl, listTeamMembers, saveTeamMember, uploadTeamMemberAvatar } from '../data/teamMembers'
 import { supabase } from '../lib/supabase'
 
@@ -294,11 +294,14 @@ function ProjectForm({ project, onClose, onSave, saving, error }) {
 const emptyMember = {
   name: '',
   position: '',
+  email: '',
+  location: '',
   github_url: '',
   portfolio_url: '',
   avatar_url: '',
   bio: '',
   skills: [],
+  education: [],
   sort_order: 0,
   is_published: true,
 }
@@ -317,13 +320,18 @@ function MemberForm({ member, onClose, onSave, saving, error }) {
     ...emptyMember,
     ...member,
     github_url: member?.github_url || '',
+    email: member?.email || '',
+    location: member?.location || '',
     portfolio_url: member?.portfolio_url || '',
     avatar_url: member?.avatar_url || '',
     bio: member?.bio || '',
     skills: Array.isArray(member?.skills) ? member.skills : [],
+    education: Array.isArray(member?.education) ? member.education : [],
   }))
   const [formError, setFormError] = useState('')
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
+  const [importingProfile, setImportingProfile] = useState(false)
+  const [profileImportMessage, setProfileImportMessage] = useState('')
   const [skillInput, setSkillInput] = useState('')
   const avatarUrl = (values.avatar_url || '').trim() || getGithubAvatarUrl(values.github_url || '')
   const fieldClass = 'mt-2 w-full border border-line bg-white px-3 py-2.5 text-sm outline-none transition focus:border-ink'
@@ -350,6 +358,31 @@ function MemberForm({ member, onClose, onSave, saving, error }) {
     }
   }
 
+  const importProfile = async () => {
+    setImportingProfile(true)
+    setProfileImportMessage('')
+    setFormError('')
+    try {
+      const profile = await fetchGithubProfile(values.github_url || '')
+      setValues((current) => ({
+        ...current,
+        github_url: profile.github_url,
+        name: current.name.trim() || profile.name,
+        email: current.email.trim() || profile.email,
+        location: current.location.trim() || profile.location,
+        bio: current.bio.trim() || profile.bio,
+        avatar_url: current.avatar_url || profile.avatar_url,
+      }))
+      setProfileImportMessage(profile.email
+        ? 'Public GitHub profile details imported.'
+        : 'Profile details imported. Email is private or unavailable; add it manually if appropriate.')
+    } catch (importError) {
+      setFormError(importError.message || 'Could not import this GitHub profile.')
+    } finally {
+      setImportingProfile(false)
+    }
+  }
+
   const addSkill = () => {
     const skill = skillInput.trim().replace(/,$/, '')
     if (!skill) return
@@ -370,6 +403,24 @@ function MemberForm({ member, onClose, onSave, saving, error }) {
     setValues((current) => ({ ...current, skills: current.skills.filter((skill) => skill !== skillToRemove) }))
   }
 
+  const updateEducation = (index, field, value) => {
+    setValues((current) => ({
+      ...current,
+      education: current.education.map((item, itemIndex) => itemIndex === index ? { ...item, [field]: value } : item),
+    }))
+  }
+
+  const addEducation = () => {
+    setValues((current) => ({
+      ...current,
+      education: [...current.education, { institution: '', qualification: '', start_year: '', end_year: '' }],
+    }))
+  }
+
+  const removeEducation = (index) => {
+    setValues((current) => ({ ...current, education: current.education.filter((_, itemIndex) => itemIndex !== index) }))
+  }
+
   const submit = (event) => {
     event.preventDefault()
     const githubUrl = (values.github_url || '').trim()
@@ -387,17 +438,29 @@ function MemberForm({ member, onClose, onSave, saving, error }) {
       setFormError('Photo URLs must use HTTPS.')
       return
     }
+    if (values.email?.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email.trim())) {
+      setFormError('Enter a valid email address or leave it blank.')
+      return
+    }
     setFormError('')
     onSave({
       ...values,
       id: member?.id,
       name: values.name.trim(),
       position: values.position.trim(),
+      email: (values.email || '').trim(),
+      location: (values.location || '').trim(),
       github_url: githubUrl,
       portfolio_url: portfolioUrl,
       avatar_url: customAvatarUrl,
       bio: (values.bio || '').trim(),
       skills: values.skills,
+      education: values.education.map((item) => ({
+        institution: item.institution.trim(),
+        qualification: item.qualification.trim(),
+        start_year: item.start_year.trim(),
+        end_year: item.end_year.trim(),
+      })).filter((item) => item.institution || item.qualification),
     })
   }
 
@@ -429,12 +492,35 @@ function MemberForm({ member, onClose, onSave, saving, error }) {
           <div className="grid gap-5 sm:grid-cols-2">
             <label className={labelClass}>Name<input required maxLength={80} name="name" value={values.name} onChange={update} className={fieldClass} placeholder="Full name" /></label>
             <label className={labelClass}>Position<input required maxLength={100} name="position" value={values.position} onChange={update} className={fieldClass} placeholder="e.g. Product Designer" /></label>
-            <label className={labelClass}>GitHub profile<input required type="url" name="github_url" value={values.github_url} onChange={update} className={fieldClass} placeholder="https://github.com/username" /></label>
+            <label className={labelClass}>Email <span className="font-normal normal-case tracking-normal text-neutral-400">Optional</span><input type="email" name="email" value={values.email || ''} onChange={update} className={fieldClass} placeholder="name@example.com" /></label>
+            <label className={labelClass}>Location <span className="font-normal normal-case tracking-normal text-neutral-400">Optional</span><input maxLength={120} name="location" value={values.location || ''} onChange={update} className={fieldClass} placeholder="City, country" /></label>
+            <div className="sm:col-span-2">
+              <label className={labelClass}>GitHub profile<input required type="url" name="github_url" value={values.github_url} onChange={update} className={fieldClass} placeholder="https://github.com/username" /></label>
+              <button type="button" onClick={importProfile} disabled={importingProfile || !values.github_url.trim()} className="mt-2 text-xs font-semibold uppercase tracking-wider underline underline-offset-4 disabled:opacity-50">{importingProfile ? 'Importing profile...' : 'Import public GitHub details'}</button>
+              {profileImportMessage && <p role="status" className="mt-2 text-xs text-emerald-800">{profileImportMessage}</p>}
+            </div>
             <label className={labelClass}>Portfolio URL <span className="font-normal normal-case tracking-normal text-neutral-400">Optional</span><input type="url" name="portfolio_url" value={values.portfolio_url || ''} onChange={update} className={fieldClass} placeholder="https://your-portfolio.com" /></label>
             <label className={labelClass}>Photo URL <span className="font-normal normal-case tracking-normal text-neutral-400">Optional override</span><input type="url" name="avatar_url" value={values.avatar_url || ''} onChange={update} className={fieldClass} placeholder="https://..." /></label>
             <label className={labelClass}>Display order<input type="number" min="0" step="1" name="sort_order" value={values.sort_order} onChange={update} className={fieldClass} /></label>
           </div>
           <label className={labelClass}>Short bio <span className="font-normal normal-case tracking-normal text-neutral-400">Optional</span><textarea maxLength={500} rows={3} name="bio" value={values.bio || ''} onChange={update} className={`${fieldClass} resize-y`} placeholder="A short introduction" /></label>
+          <fieldset>
+            <legend className={labelClass}>Education background</legend>
+            <div className="mt-2 space-y-3">
+              {values.education.map((item, index) => (
+                <div key={`education-${index}`} className="border border-line bg-white p-4">
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <label className={labelClass}>School / institution<input maxLength={120} value={item.institution} onChange={(event) => updateEducation(index, 'institution', event.target.value)} className={fieldClass} placeholder="School or institution" /></label>
+                    <label className={labelClass}>Degree / qualification<input maxLength={120} value={item.qualification} onChange={(event) => updateEducation(index, 'qualification', event.target.value)} className={fieldClass} placeholder="Degree, course, or certificate" /></label>
+                    <label className={labelClass}>Start year<input maxLength={20} value={item.start_year} onChange={(event) => updateEducation(index, 'start_year', event.target.value)} className={fieldClass} placeholder="2020" /></label>
+                    <label className={labelClass}>End year<input maxLength={20} value={item.end_year} onChange={(event) => updateEducation(index, 'end_year', event.target.value)} className={fieldClass} placeholder="2024 or Present" /></label>
+                  </div>
+                  <button type="button" onClick={() => removeEducation(index)} className="mt-3 text-xs font-semibold text-red-700 underline underline-offset-4">Remove education</button>
+                </div>
+              ))}
+              <button type="button" onClick={addEducation} className="border border-line px-4 py-2.5 text-xs font-semibold uppercase tracking-wider transition hover:border-ink">Add education</button>
+            </div>
+          </fieldset>
           <fieldset>
             <legend className={labelClass}>Skills</legend>
             <div className="mt-2 flex gap-2">
