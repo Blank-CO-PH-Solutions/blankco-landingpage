@@ -54,14 +54,19 @@ export default function MembersPage() {
         ) : loadError ? (
           <p role="alert" className="border border-line p-6 text-sm text-neutral-600">{loadError}</p>
         ) : members.length ? (
-          <div className="grid gap-px border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
-            {members.map((member) => (
-              <article key={member.id} className="flex min-w-0 flex-col bg-paper p-6 sm:p-8">
+          <div className="grid gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-8">
+            {members.map((member, index) => (
+              <article
+                key={member.id}
+                style={{ animationDelay: `${index * 80}ms` }}
+                className="page-enter-up flex min-w-0 flex-col border border-line bg-paper p-6 transition-transform duration-300 hover:-translate-y-1 hover:shadow-[8px_8px_0_0_#0a0a0a] sm:p-8"
+              >
                 <button type="button" onClick={() => setSelectedMember(member)} className="flex w-full items-center gap-4 text-left" aria-label={`View ${member.name}'s profile`}>
                   <MemberAvatar member={member} />
                   <span className="min-w-0">
                     <span className="block truncate text-lg font-semibold">{member.name}</span>
                     <span className="mt-1 block text-sm text-neutral-500">{member.position}</span>
+                    {member.location && <span className="mt-1 block truncate text-xs text-neutral-500">{member.location}</span>}
                     <span className="mt-2 block text-xs font-semibold uppercase tracking-wider text-neutral-600">View profile</span>
                   </span>
                 </button>

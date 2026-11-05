@@ -33,7 +33,7 @@ export default function ContactSection() {
             </div>
             <div className="bg-paper p-6">
               <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500">Phone</p>
-              <p className="mt-2 font-medium">+63 (0) 000 000 0000</p>
+              <p className="mt-2 font-medium">+63 953 174 3347</p>
             </div>
             <div className="bg-paper p-6">
               <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500">Location</p>

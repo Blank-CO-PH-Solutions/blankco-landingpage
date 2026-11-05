@@ -12,10 +12,31 @@ import ServiceDetailPage from './pages/ServiceDetailPage.jsx'
 import ContactUsPage from './pages/ContactUsPage.jsx'
 import ProjectsPage from './pages/ProjectsPage.jsx'
 import MembersPage from './pages/MembersPage.jsx'
+import { services } from './data/services.js'
+
+const organizationStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Blank CO PH Solutions',
+  url: 'https://blankco-landingpage.vercel.app',
+  email: 'blankco.ph@gmail.com',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Baggao',
+    addressRegion: 'Cagayan',
+    addressCountry: 'PH',
+  },
+  sameAs: [
+    'https://github.com/Blank-CO-PH-Solutions',
+    'https://github.com/nathaniel-ramos-dev',
+  ],
+  knowsAbout: services.map((service) => service.title),
+}
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
+      <script type="application/ld+json">{JSON.stringify(organizationStructuredData)}</script>
       <Routes>
         <Route element={<App />}>
           <Route index element={<LandingPage />} />

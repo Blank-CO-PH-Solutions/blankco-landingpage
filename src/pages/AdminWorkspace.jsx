@@ -302,7 +302,7 @@ const emptyMember = {
   bio: '',
   skills: [],
   education: [],
-  sort_order: 0,
+  sort_order: 100,
   is_published: true,
 }
 
@@ -313,6 +313,16 @@ function isGithubProfileUrl(value) {
   } catch {
     return false
   }
+}
+function defaultMemberSortOrder(position) {
+  const role = position.trim().toLowerCase()
+  if (role.includes('chief executive officer') || /\bceo\b/.test(role)) return 0
+  if (role.includes('chief technology officer') || /\bcto\b/.test(role)) return 10
+  if (role.includes('chief operating officer') || /\bcoo\b/.test(role)) return 20
+  if (role.includes('chief financial officer') || /\bcfo\b/.test(role)) return 30
+  if (role.includes('chief marketing officer') || /\bcmo\b/.test(role)) return 40
+  if (role.includes('chief') || role.startsWith('president')) return 50
+  return 100
 }
 
 function MemberForm({ member, onClose, onSave, saving, error }) {
@@ -339,6 +349,16 @@ function MemberForm({ member, onClose, onSave, saving, error }) {
 
   const update = (event) => {
     const { name, value, type, checked } = event.target
+    if (name === 'position' && !member) {
+      setValues((current) => ({
+        ...current,
+        position: value,
+        sort_order: current.sort_order === defaultMemberSortOrder(current.position)
+          ? defaultMemberSortOrder(value)
+          : current.sort_order,
+      }))
+      return
+    }
     setValues((current) => ({ ...current, [name]: type === 'checkbox' ? checked : value }))
   }
 

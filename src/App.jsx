@@ -1,9 +1,83 @@
+import { useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import Header from './components/Header'
 import Footer from './components/Footer'
+import { services } from './data/services'
+
+const siteUrl = 'https://blankco-landingpage.vercel.app'
+
+const seoPages = {
+  '/': {
+    title: 'Blank CO PH Solutions | Strategy, Automation & Digital Products',
+    description: 'Blank CO PH Solutions helps Philippine businesses improve operations with practical business strategy, workflow automation, digital products, and ongoing support.',
+  },
+  '/about': {
+    title: 'About Blank CO PH Solutions | Cagayan, Philippines',
+    description: 'Meet Blank CO PH Solutions, a student-led digital solutions team based in Baggao, Cagayan, building practical tools and better business operations.',
+  },
+  '/services': {
+    title: 'Business Strategy, Automation & Digital Services | Blank CO',
+    description: 'Explore business strategy, workflow automation, digital product development, and ongoing support from Blank CO PH Solutions in the Philippines.',
+  },
+  '/projects': {
+    title: 'Our Projects | Blank CO PH Solutions',
+    description: 'Explore selected digital products, workflow systems, and business projects built by Blank CO PH Solutions and its collaborators.',
+  },
+  '/members': {
+    title: 'Meet the Team | Blank CO PH Solutions',
+    description: 'Meet the people behind Blank CO PH Solutions: a student-led team creating practical digital solutions in Cagayan, Philippines.',
+  },
+  '/contact-us': {
+    title: 'Contact Blank CO PH Solutions | Start a Project',
+    description: 'Contact Blank CO PH Solutions to discuss business strategy, workflow automation, a digital product, or ongoing support for your team.',
+  },
+}
+
+function setMeta(attribute, key, content) {
+  let element = document.head.querySelector(`meta[${attribute}="${key}"]`)
+  if (!element) {
+    element = document.createElement('meta')
+    element.setAttribute(attribute, key)
+    document.head.appendChild(element)
+  }
+  element.setAttribute('content', content)
+}
 
 function App() {
   const location = useLocation()
+  const pathname = location.pathname.replace(/\/$/, '') || '/'
+
+  useEffect(() => {
+    const serviceSlug = pathname.startsWith('/services/') ? pathname.split('/')[2] : null
+    const service = serviceSlug ? services.find((item) => item.slug === serviceSlug) : null
+    const page = service
+      ? {
+          title: `${service.title} | Blank CO PH Solutions`,
+          description: service.description,
+        }
+      : seoPages[pathname] || seoPages['/']
+    const canonicalUrl = `${siteUrl}${pathname === '/' ? '/' : pathname}`
+
+    document.title = page.title
+    setMeta('name', 'description', page.description)
+    setMeta('name', 'robots', 'index,follow,max-image-preview:large')
+    setMeta('property', 'og:title', page.title)
+    setMeta('property', 'og:description', page.description)
+    setMeta('property', 'og:url', canonicalUrl)
+    setMeta('property', 'og:type', 'website')
+    setMeta('property', 'og:site_name', 'Blank CO PH Solutions')
+    setMeta('name', 'twitter:card', 'summary')
+    setMeta('name', 'twitter:title', page.title)
+    setMeta('name', 'twitter:description', page.description)
+
+    let canonical = document.head.querySelector('link[rel="canonical"]')
+    if (!canonical) {
+      canonical = document.createElement('link')
+      canonical.rel = 'canonical'
+      document.head.appendChild(canonical)
+    }
+    canonical.href = canonicalUrl
+  }, [pathname])
 
   return (
     <div className="flex min-h-screen flex-col overflow-x-hidden">
