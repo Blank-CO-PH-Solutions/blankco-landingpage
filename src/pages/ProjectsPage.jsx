@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { listProjects } from '../data/projects'
+import ProjectLinks from '../components/ProjectLinks'
 
 export default function ProjectsPage() {
   const [activeCategory, setActiveCategory] = useState('All work')
@@ -86,6 +87,7 @@ export default function ProjectsPage() {
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500">{project.category} <span className="mx-2">/</span> {project.client}</p>
                     <p className="mt-3 max-w-xl text-sm leading-6 text-neutral-600">{project.description}</p>
+                    <ProjectLinks project={project} />
                   </div>
                   <span className="shrink-0 text-sm font-medium text-neutral-500">{project.year}</span>
                 </div>

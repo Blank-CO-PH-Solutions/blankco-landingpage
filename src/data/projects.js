@@ -10,7 +10,14 @@ function requireSupabase() {
 export async function listProjects({ publishedOnly = false } = {}) {
   let query = requireSupabase().from('projects').select('*').order('created_at', { ascending: false })
 
-  if (publishedOnly) query = query.eq('published', true)
+  if (publishedOnly) {
+    query = query
+      .eq('published', true)
+      .not('github_url', 'is', null)
+      .neq('github_url', '')
+      .not('live_site_url', 'is', null)
+      .neq('live_site_url', '')
+  }
 
   const { data, error } = await query
   if (error) throw error
@@ -27,6 +34,8 @@ export async function saveProject(project) {
     category: project.category,
     year: Number(project.year),
     description: project.description,
+    github_url: project.github_url || null,
+    live_site_url: project.live_site_url || null,
     visual: project.visual,
     published: project.published,
   }

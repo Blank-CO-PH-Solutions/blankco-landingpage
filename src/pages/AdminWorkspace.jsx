@@ -30,12 +30,32 @@ const emptyProject = {
   category: categories[2],
   year: new Date().getFullYear().toString(),
   description: '',
+  github_url: '',
+  live_site_url: '',
   visual: visualOptions[0].value,
   published: false,
 }
 
+function isHttpsUrl(value) {
+  try {
+    return new URL(value).protocol === 'https:'
+  } catch {
+    return false
+  }
+}
+
+function isGithubRepositoryUrl(value) {
+  try {
+    const url = new URL(value)
+    return url.protocol === 'https:' && url.hostname === 'github.com' && url.pathname.split('/').filter(Boolean).length >= 2
+  } catch {
+    return false
+  }
+}
+
 function ProjectForm({ project, onClose, onSave, saving, error }) {
   const [values, setValues] = useState(project || emptyProject)
+  const [formError, setFormError] = useState('')
 
   const update = (event) => {
     const { name, value, type, checked } = event.target
@@ -44,12 +64,23 @@ function ProjectForm({ project, onClose, onSave, saving, error }) {
 
   const submit = (event) => {
     event.preventDefault()
+    if (values.published && !isGithubRepositoryUrl(values.github_url.trim())) {
+      setFormError('Add a valid GitHub repository URL before publishing.')
+      return
+    }
+    if (values.published && !isHttpsUrl(values.live_site_url.trim())) {
+      setFormError('Add a valid HTTPS live site URL before publishing.')
+      return
+    }
+    setFormError('')
     onSave({
       ...values,
       id: project?.id,
       name: values.name.trim(),
       client: values.client.trim(),
       description: values.description.trim(),
+      github_url: values.github_url.trim(),
+      live_site_url: values.live_site_url.trim(),
     })
   }
 
@@ -93,6 +124,16 @@ function ProjectForm({ project, onClose, onSave, saving, error }) {
             Short description
             <textarea required maxLength={240} rows={3} name="description" value={values.description} onChange={update} className={`${fieldClass} resize-y`} placeholder="What changed for the client?" />
           </label>
+          <div className="grid gap-5 sm:grid-cols-2">
+            <label className={labelClass}>
+              GitHub repository URL
+              <input type="url" name="github_url" value={values.github_url || ''} onChange={update} className={fieldClass} placeholder="https://github.com/org/repository" />
+            </label>
+            <label className={labelClass}>
+              Live site URL
+              <input type="url" name="live_site_url" value={values.live_site_url || ''} onChange={update} className={fieldClass} placeholder="https://example.com" />
+            </label>
+          </div>
           <fieldset>
             <legend className={labelClass}>Project color</legend>
             <div className="mt-3 flex flex-wrap gap-3">
@@ -112,7 +153,7 @@ function ProjectForm({ project, onClose, onSave, saving, error }) {
               <span className="mt-1 block text-xs text-neutral-500">Published projects appear on the public Projects page.</span>
             </span>
           </label>
-          {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
+          {(formError || error) && <p role="alert" className="text-sm text-red-700">{formError || error}</p>}
           <div className="flex justify-end gap-3 pt-1">
             <button type="button" onClick={onClose} className="border border-line px-5 py-3 text-xs font-semibold uppercase tracking-widest transition hover:border-ink">Cancel</button>
             <button type="submit" disabled={saving} className="bg-ink px-5 py-3 text-xs font-semibold uppercase tracking-widest text-paper transition hover:bg-neutral-700 disabled:opacity-50">{saving ? 'Saving...' : 'Save project'}</button>
@@ -229,6 +270,10 @@ function AdminWorkspace({ onSignOut }) {
 
   const togglePublished = async (project) => {
     setOperationError('')
+    if (!project.published && (!isGithubRepositoryUrl(project.github_url || '') || !isHttpsUrl(project.live_site_url || ''))) {
+      setOperationError('Add a valid GitHub repository and HTTPS live site URL before publishing this project.')
+      return
+    }
     try {
       const updated = await updateProject(project.id, { published: !project.published })
       setProjects((current) => current.map((item) => item.id === updated.id ? updated : item))

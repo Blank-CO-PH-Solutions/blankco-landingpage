@@ -12,11 +12,21 @@ create table if not exists public.projects (
   category text not null check (char_length(category) between 1 and 80),
   year integer not null check (year between 2000 and 2100),
   description text not null check (char_length(description) between 1 and 240),
+  github_url text,
+  live_site_url text,
   visual text not null default 'project-visual-coral',
   published boolean not null default false,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table public.projects add column if not exists github_url text;
+alter table public.projects add column if not exists live_site_url text;
+
+update public.projects
+set published = false
+where slug in ('northstar-workflows', 'field-notes', 'common-ground')
+  and (github_url is null or github_url = '' or live_site_url is null or live_site_url = '');
 
 create table if not exists public.messages (
   id uuid primary key default gen_random_uuid(),
@@ -128,7 +138,7 @@ create policy messages_admin_delete
 
 insert into public.projects (slug, name, client, category, year, description, visual, published)
 values
-  ('northstar-workflows', 'Northstar Workflows', 'Northstar Studio', 'Workflow automation', 2025, 'A calmer way to handle incoming requests, approvals, and handoffs across a growing creative team.', 'project-visual-coral', true),
-  ('field-notes', 'Fieldnotes Market', 'Fieldnotes Market', 'Digital product', 2025, 'A straightforward storefront and inventory view for a small-batch maker selling directly to customers.', 'project-visual-green', true),
-  ('common-ground', 'Common Ground', 'Common Ground Co-op', 'Business strategy', 2024, 'A practical operating plan and service directory that helps a local community group connect people to support.', 'project-visual-blue', true)
+  ('northstar-workflows', 'Northstar Workflows', 'Northstar Studio', 'Workflow automation', 2025, 'A calmer way to handle incoming requests, approvals, and handoffs across a growing creative team.', 'project-visual-coral', false),
+  ('field-notes', 'Fieldnotes Market', 'Fieldnotes Market', 'Digital product', 2025, 'A straightforward storefront and inventory view for a small-batch maker selling directly to customers.', 'project-visual-green', false),
+  ('common-ground', 'Common Ground', 'Common Ground Co-op', 'Business strategy', 2024, 'A practical operating plan and service directory that helps a local community group connect people to support.', 'project-visual-blue', false)
 on conflict (slug) do nothing;

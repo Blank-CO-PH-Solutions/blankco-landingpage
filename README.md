@@ -36,7 +36,7 @@ If it isn't solved, we aren't done. Straight answers, real results, done right.
 The app uses Supabase for project records, contact inquiries, and admin authentication. The browser uses only the project URL and anon key; never put the database password or a service-role key in frontend environment variables.
 
 1. Copy `.env.example` to `.env.local` and set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`. Restart the dev server after changing environment variables.
-2. In the Supabase SQL Editor, run [`supabase/schema.sql`](supabase/schema.sql). This creates the tables, row-level security policies, and the initial portfolio projects.
+2. In the Supabase SQL Editor, run [`supabase/schema.sql`](supabase/schema.sql). If the database was already initialized, rerun it to add the project URL columns. It creates the tables, row-level security policies, and initial draft portfolio entries.
 3. In Supabase Authentication, create an admin user. Disable public sign-ups in the Auth settings.
 4. Add that user's email to the admin allowlist by running this in the SQL Editor, replacing the example address:
 
@@ -48,4 +48,4 @@ The app uses Supabase for project records, contact inquiries, and admin authenti
 
 5. Sign in at `/admin`. The dashboard checks both the Supabase Auth session and the `admin_users` allowlist. RLS independently protects project writes and the message inbox.
 
-Public visitors can submit contact inquiries and read published projects. Admins can manage projects and review, mark, or delete messages. Replies open the visitor's email address in the configured mail app.
+Public visitors can submit contact inquiries and read published projects. Each published project must have a valid GitHub repository URL and an HTTPS live-site URL; the sample projects stay as drafts until you enter real destinations in the admin editor. Admins can manage projects and review, mark, or delete messages. Replies open the visitor's email address in the configured mail app.
