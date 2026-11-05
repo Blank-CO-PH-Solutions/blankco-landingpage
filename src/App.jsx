@@ -1,10 +1,16 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import { services } from './data/services'
 
 const siteUrl = 'https://blankco-landingpage.vercel.app'
+const navigationOrder = ['/', '/about', '/services', '/projects', '/members', '/contact-us']
+
+function navigationIndex(pathname) {
+  const section = pathname.startsWith('/services/') ? '/services' : pathname
+  return navigationOrder.indexOf(section)
+}
 
 const seoPages = {
   '/': {
@@ -46,6 +52,21 @@ function setMeta(attribute, key, content) {
 function App() {
   const location = useLocation()
   const pathname = location.pathname.replace(/\/$/, '') || '/'
+  const [previousPath, setPreviousPath] = useState(pathname)
+  const [pageTransition, setPageTransition] = useState('page-enter-up')
+
+  if (previousPath !== pathname) {
+    const previousIndex = navigationIndex(previousPath)
+    const currentIndex = navigationIndex(pathname)
+    setPageTransition(
+      previousIndex === currentIndex || previousIndex === -1 || currentIndex === -1
+        ? 'page-enter-up'
+        : currentIndex > previousIndex
+          ? 'page-enter-right'
+          : 'page-enter-left',
+    )
+    setPreviousPath(pathname)
+  }
 
   useEffect(() => {
     const serviceSlug = pathname.startsWith('/services/') ? pathname.split('/')[2] : null
@@ -83,7 +104,7 @@ function App() {
     <div className="flex min-h-screen flex-col overflow-x-hidden">
       <Header />
       <main className="flex-1 pt-[76px]">
-        <div key={location.pathname} className="page-enter-up">
+        <div key={location.pathname} className={pageTransition}>
           <Outlet />
         </div>
       </main>
