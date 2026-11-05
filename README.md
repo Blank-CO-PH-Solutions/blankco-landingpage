@@ -30,3 +30,22 @@ If it isn't solved, we aren't done. Straight answers, real results, done right.
 
 - Location: San Jose, Baggao, Cagayn, Philippines
 - Availability: Most work happens remotely, so timezone and location aren't a problem. On-call support available 24/7.
+
+## Supabase setup
+
+The app uses Supabase for project records, contact inquiries, and admin authentication. The browser uses only the project URL and anon key; never put the database password or a service-role key in frontend environment variables.
+
+1. Copy `.env.example` to `.env.local` and set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`. Restart the dev server after changing environment variables.
+2. In the Supabase SQL Editor, run [`supabase/schema.sql`](supabase/schema.sql). This creates the tables, row-level security policies, and the initial portfolio projects.
+3. In Supabase Authentication, create an admin user. Disable public sign-ups in the Auth settings.
+4. Add that user's email to the admin allowlist by running this in the SQL Editor, replacing the example address:
+
+	```sql
+	insert into public.admin_users (user_id, email)
+	select id, email from auth.users where email = 'admin@example.com'
+	on conflict (user_id) do update set email = excluded.email;
+	```
+
+5. Sign in at `/admin`. The dashboard checks both the Supabase Auth session and the `admin_users` allowlist. RLS independently protects project writes and the message inbox.
+
+Public visitors can submit contact inquiries and read published projects. Admins can manage projects and review, mark, or delete messages. Replies open the visitor's email address in the configured mail app.

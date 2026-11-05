@@ -17,10 +17,10 @@ export default function ContactSection() {
               href="mailto:blankco.ph@gmail.com"
               className="bg-ink px-8 py-3 text-sm font-semibold uppercase tracking-widest text-paper transition hover:bg-neutral-800"
             >
-              blankco.ph@gmail.com
+              
             </a>
             <a
-              href="tel:+630000000000"
+              href="tel:+639531743347"
               className="border border-ink px-8 py-3 text-sm font-semibold uppercase tracking-widest text-ink transition hover:bg-ink hover:text-paper"
             >
               Book a call

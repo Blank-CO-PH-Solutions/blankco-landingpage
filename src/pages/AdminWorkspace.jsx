@@ -1,0 +1,475 @@
+import { useEffect, useState } from 'react'
+import {
+  ArrowTopRightOnSquareIcon,
+  CheckIcon,
+  EyeIcon,
+  FolderIcon,
+  InboxIcon,
+  MagnifyingGlassIcon,
+  PencilSquareIcon,
+  PlusIcon,
+  Squares2X2Icon,
+  TrashIcon,
+  XMarkIcon,
+} from '@heroicons/react/24/outline'
+import { Link } from 'react-router-dom'
+import { deleteMessage, listMessages, setMessageRead } from '../data/messages'
+import { deleteProject, listProjects, saveProject as saveProjectRecord, updateProject } from '../data/projects'
+import { supabase } from '../lib/supabase'
+
+const categories = ['Business strategy', 'Workflow automation', 'Digital product', 'Ongoing support']
+const visualOptions = [
+  { value: 'project-visual-coral', label: 'Coral' },
+  { value: 'project-visual-green', label: 'Green' },
+  { value: 'project-visual-blue', label: 'Blue' },
+]
+
+const emptyProject = {
+  name: '',
+  client: '',
+  category: categories[2],
+  year: new Date().getFullYear().toString(),
+  description: '',
+  visual: visualOptions[0].value,
+  published: false,
+}
+
+function ProjectForm({ project, onClose, onSave, saving, error }) {
+  const [values, setValues] = useState(project || emptyProject)
+
+  const update = (event) => {
+    const { name, value, type, checked } = event.target
+    setValues((current) => ({ ...current, [name]: type === 'checkbox' ? checked : value }))
+  }
+
+  const submit = (event) => {
+    event.preventDefault()
+    onSave({
+      ...values,
+      id: project?.id,
+      name: values.name.trim(),
+      client: values.client.trim(),
+      description: values.description.trim(),
+    })
+  }
+
+  const fieldClass = 'mt-2 w-full border border-line bg-white px-3 py-2.5 text-sm outline-none transition focus:border-ink'
+  const labelClass = 'block text-xs font-semibold uppercase tracking-wider text-neutral-600'
+
+  return (
+    <div className="fixed inset-0 z-[70] flex items-end justify-center bg-ink/50 p-0 sm:items-center sm:p-6" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
+      <section role="dialog" aria-modal="true" aria-labelledby="project-form-title" className="max-h-[94vh] w-full max-w-2xl overflow-y-auto bg-paper shadow-2xl sm:max-h-[90vh]">
+        <div className="flex items-start justify-between border-b border-line px-6 py-5 sm:px-8">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500">Project details</p>
+            <h2 id="project-form-title" className="mt-1 text-2xl font-semibold">{project ? 'Edit project' : 'Add project'}</h2>
+          </div>
+          <button type="button" onClick={onClose} aria-label="Close project form" className="flex h-9 w-9 items-center justify-center border border-line transition hover:border-ink">
+            <XMarkIcon className="h-5 w-5" />
+          </button>
+        </div>
+        <form onSubmit={submit} className="space-y-5 px-6 py-6 sm:px-8">
+          <div className="grid gap-5 sm:grid-cols-2">
+            <label className={labelClass}>
+              Project name
+              <input autoFocus required maxLength={70} name="name" value={values.name} onChange={update} className={fieldClass} placeholder="e.g. Northstar Workflows" />
+            </label>
+            <label className={labelClass}>
+              Client
+              <input required maxLength={70} name="client" value={values.client} onChange={update} className={fieldClass} placeholder="Client or organization" />
+            </label>
+            <label className={labelClass}>
+              Category
+              <select name="category" value={values.category} onChange={update} className={fieldClass}>
+                {categories.map((category) => <option key={category}>{category}</option>)}
+              </select>
+            </label>
+            <label className={labelClass}>
+              Year
+              <input required type="number" min="2000" max="2100" step="1" name="year" value={values.year} onChange={update} className={fieldClass} />
+            </label>
+          </div>
+          <label className={labelClass}>
+            Short description
+            <textarea required maxLength={240} rows={3} name="description" value={values.description} onChange={update} className={`${fieldClass} resize-y`} placeholder="What changed for the client?" />
+          </label>
+          <fieldset>
+            <legend className={labelClass}>Project color</legend>
+            <div className="mt-3 flex flex-wrap gap-3">
+              {visualOptions.map((option) => (
+                <label key={option.value} className={`flex cursor-pointer items-center gap-2 border px-3 py-2 text-sm ${values.visual === option.value ? 'border-ink' : 'border-line'}`}>
+                  <input type="radio" name="visual" value={option.value} checked={values.visual === option.value} onChange={update} className="accent-ink" />
+                  <span className={`h-4 w-4 ${option.value}`} />
+                  {option.label}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+          <label className="flex cursor-pointer items-start gap-3 border-y border-line py-4">
+            <input type="checkbox" name="published" checked={values.published} onChange={update} className="mt-1 h-4 w-4 accent-ink" />
+            <span>
+              <span className="block text-sm font-semibold">Publish project</span>
+              <span className="mt-1 block text-xs text-neutral-500">Published projects appear on the public Projects page.</span>
+            </span>
+          </label>
+          {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
+          <div className="flex justify-end gap-3 pt-1">
+            <button type="button" onClick={onClose} className="border border-line px-5 py-3 text-xs font-semibold uppercase tracking-widest transition hover:border-ink">Cancel</button>
+            <button type="submit" disabled={saving} className="bg-ink px-5 py-3 text-xs font-semibold uppercase tracking-widest text-paper transition hover:bg-neutral-700 disabled:opacity-50">{saving ? 'Saving...' : 'Save project'}</button>
+          </div>
+        </form>
+      </section>
+    </div>
+  )
+}
+
+function AdminLogin() {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+
+  const submit = async (event) => {
+    event.preventDefault()
+    if (!supabase) return
+    setSubmitting(true)
+    setError('')
+    try {
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
+      if (signInError) setError('Sign-in failed. Check your email and password.')
+    } catch {
+      setError('Could not reach the sign-in service. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  return (
+    <main className="pattern-grid flex min-h-screen items-center justify-center bg-[#f3f3ef] px-5 py-12">
+      <section className="w-full max-w-md border border-line bg-paper p-7 shadow-[8px_8px_0_0_#0a0a0a] sm:p-10">
+        <Link to="/" className="text-sm font-bold tracking-tight">Blank CO<span className="text-neutral-400">.</span></Link>
+        <p className="mt-10 text-xs font-semibold uppercase tracking-widest text-neutral-500">Admin workspace</p>
+        <h1 className="mt-2 text-3xl font-semibold">Sign in</h1>
+        <p className="mt-3 text-sm text-neutral-500">Use an administrator account to continue.</p>
+        {!supabase ? (
+          <p role="alert" className="mt-6 border border-red-200 bg-red-50 p-3 text-sm text-red-800">Supabase is not configured. Set the project URL and anon key in the local environment.</p>
+        ) : (
+          <form onSubmit={submit} className="mt-8 space-y-5">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-600">
+              Email
+              <input autoComplete="username" type="email" required value={email} onChange={(event) => setEmail(event.target.value)} className="mt-2 w-full border border-line bg-white px-3 py-3 text-sm outline-none focus:border-ink" />
+            </label>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-600">
+              Password
+              <input autoComplete="current-password" type="password" required value={password} onChange={(event) => setPassword(event.target.value)} className="mt-2 w-full border border-line bg-white px-3 py-3 text-sm outline-none focus:border-ink" />
+            </label>
+            {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
+            <button disabled={submitting} type="submit" className="w-full bg-ink px-5 py-3.5 text-xs font-semibold uppercase tracking-widest text-paper transition hover:bg-neutral-700 disabled:opacity-50">
+              {submitting ? 'Signing in...' : 'Sign in'}
+            </button>
+          </form>
+        )}
+      </section>
+    </main>
+  )
+}
+
+function formatDate(value) {
+  return new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value))
+}
+
+function AdminWorkspace({ onSignOut }) {
+  const [projects, setProjects] = useState([])
+  const [messages, setMessages] = useState([])
+  const [activeView, setActiveView] = useState('projects')
+  const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState('All projects')
+  const [selectedMessage, setSelectedMessage] = useState(null)
+  const [editingProject, setEditingProject] = useState(null)
+  const [formOpen, setFormOpen] = useState(false)
+  const [loadingData, setLoadingData] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [operationError, setOperationError] = useState('')
+  const [dataError, setDataError] = useState('')
+
+  useEffect(() => {
+    let active = true
+    Promise.all([listProjects(), listMessages()])
+      .then(([projectRows, messageRows]) => {
+        if (!active) return
+        setProjects(projectRows)
+        setMessages(messageRows)
+      })
+      .catch(() => {
+        if (active) setDataError('The workspace could not load its data. Check the Supabase schema and access policies.')
+      })
+      .finally(() => {
+        if (active) setLoadingData(false)
+      })
+
+    return () => { active = false }
+  }, [])
+
+  const saveProject = async (project) => {
+    setSaving(true)
+    setOperationError('')
+    try {
+      const saved = await saveProjectRecord(project)
+      setProjects((current) => project.id
+        ? current.map((item) => item.id === saved.id ? saved : item)
+        : [saved, ...current])
+      setFormOpen(false)
+      setEditingProject(null)
+    } catch (error) {
+      setOperationError(error.message || 'The project could not be saved.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const togglePublished = async (project) => {
+    setOperationError('')
+    try {
+      const updated = await updateProject(project.id, { published: !project.published })
+      setProjects((current) => current.map((item) => item.id === updated.id ? updated : item))
+    } catch {
+      setOperationError('The project status could not be updated.')
+    }
+  }
+
+  const removeProject = async (project) => {
+    if (!window.confirm(`Delete “${project.name}”? This cannot be undone.`)) return
+    try {
+      await deleteProject(project.id)
+      setProjects((current) => current.filter((item) => item.id !== project.id))
+    } catch {
+      setOperationError('The project could not be deleted.')
+    }
+  }
+
+  const openMessage = async (message) => {
+    setSelectedMessage(message)
+    if (message.is_read) return
+    try {
+      const updated = await setMessageRead(message.id, true)
+      setMessages((current) => current.map((item) => item.id === updated.id ? updated : item))
+      setSelectedMessage(updated)
+    } catch {
+      setOperationError('The message could not be marked as read.')
+    }
+  }
+
+  const toggleMessageRead = async (message) => {
+    try {
+      const updated = await setMessageRead(message.id, !message.is_read)
+      setMessages((current) => current.map((item) => item.id === updated.id ? updated : item))
+      setSelectedMessage(updated)
+    } catch {
+      setOperationError('The message status could not be updated.')
+    }
+  }
+
+  const removeMessage = async (message) => {
+    if (!window.confirm(`Delete the message from ${message.name}? This cannot be undone.`)) return
+    try {
+      await deleteMessage(message.id)
+      setMessages((current) => current.filter((item) => item.id !== message.id))
+      setSelectedMessage((current) => current?.id === message.id ? null : current)
+    } catch {
+      setOperationError('The message could not be deleted.')
+    }
+  }
+
+  const openNewProject = () => {
+    setOperationError('')
+    setEditingProject(null)
+    setFormOpen(true)
+  }
+
+  const startEditing = (project) => {
+    setOperationError('')
+    setEditingProject(project)
+    setFormOpen(true)
+  }
+
+  const visibleProjects = projects.filter((project) => {
+    const matchesSearch = `${project.name} ${project.client} ${project.category}`.toLowerCase().includes(search.toLowerCase())
+    const matchesStatus = statusFilter === 'All projects' || (statusFilter === 'Published' ? project.published : !project.published)
+    return matchesSearch && matchesStatus
+  })
+  const publishedCount = projects.filter((project) => project.published).length
+  const unreadCount = messages.filter((message) => !message.is_read).length
+
+  return (
+    <div className="min-h-screen bg-[#f3f3ef] text-ink lg:grid lg:grid-cols-[232px_minmax(0,1fr)]">
+      <aside className="flex flex-col border-b border-line bg-white lg:min-h-screen lg:border-b-0 lg:border-r">
+        <Link to="/" className="flex items-center gap-3 border-b border-line px-5 py-5">
+          <span className="flex h-9 w-9 items-center justify-center bg-ink text-sm font-bold text-paper">B.</span>
+          <span>
+            <span className="block text-sm font-bold leading-tight">Blank CO</span>
+            <span className="block text-[10px] font-semibold uppercase tracking-widest text-neutral-500">Admin workspace</span>
+          </span>
+        </Link>
+        <nav className="flex gap-1 px-3 py-3 lg:flex-col lg:py-6" aria-label="Admin navigation">
+          <button type="button" onClick={() => setActiveView('projects')} aria-current={activeView === 'projects' ? 'page' : undefined} className={`flex items-center gap-3 px-3 py-2.5 text-left text-sm font-medium ${activeView === 'projects' ? 'bg-ink text-paper' : 'text-neutral-600 transition hover:bg-neutral-100 hover:text-ink'}`}>
+            <Squares2X2Icon className="h-4 w-4" /> Projects
+            <span className="ml-auto text-xs opacity-60">{projects.length}</span>
+          </button>
+          <button type="button" onClick={() => setActiveView('messages')} aria-current={activeView === 'messages' ? 'page' : undefined} className={`flex items-center gap-3 px-3 py-2.5 text-left text-sm font-medium ${activeView === 'messages' ? 'bg-ink text-paper' : 'text-neutral-600 transition hover:bg-neutral-100 hover:text-ink'}`}>
+            <InboxIcon className="h-4 w-4" /> Messages
+            {unreadCount > 0 && <span className="ml-auto min-w-5 bg-emerald-100 px-1.5 py-0.5 text-center text-[10px] text-emerald-900">{unreadCount}</span>}
+          </button>
+        </nav>
+        <div className="mt-auto hidden border-t border-line p-5 text-xs text-neutral-500 lg:block">
+          <p className="font-semibold text-neutral-700">Blank CO PH Solutions</p>
+          <p className="mt-1">Content workspace</p>
+        </div>
+      </aside>
+
+      <main className="min-w-0">
+        <header className="flex items-center justify-between border-b border-line bg-white px-5 py-4 sm:px-8">
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-neutral-500">Content management</p>
+            <h1 className="mt-1 text-xl font-semibold">{activeView === 'projects' ? 'Projects' : 'Messages'}</h1>
+          </div>
+          <div className="flex items-center gap-2 sm:gap-4">
+            <Link to="/projects" aria-label="View public projects" title="View public site" className="flex h-10 items-center gap-2 border border-line px-3 text-xs font-semibold uppercase tracking-wider transition hover:border-ink sm:px-4">
+              <ArrowTopRightOnSquareIcon className="h-4 w-4" /><span className="hidden sm:inline">View site</span>
+            </Link>
+            {activeView === 'projects' && <button type="button" onClick={openNewProject} className="flex h-10 items-center gap-2 bg-ink px-3 text-xs font-semibold uppercase tracking-wider text-paper transition hover:bg-neutral-700 sm:px-4"><PlusIcon className="h-4 w-4" /><span className="hidden sm:inline">Add project</span><span className="sm:hidden">Add</span></button>}
+            <button type="button" onClick={onSignOut} className="h-10 border border-line px-3 text-xs font-semibold uppercase tracking-wider transition hover:border-ink">Sign out</button>
+          </div>
+        </header>
+
+        <div className="mx-auto max-w-7xl px-5 py-8 sm:px-8 sm:py-10">
+          {operationError && <p role="alert" className="mb-5 border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">{operationError}</p>}
+          {dataError && <p role="alert" className="mb-5 border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">{dataError}</p>}
+          {activeView === 'projects' ? (
+            <>
+              <div className="grid gap-px border border-line bg-line sm:grid-cols-3">
+                <div className="bg-white p-5 sm:p-6"><p className="text-xs font-semibold uppercase tracking-widest text-neutral-500">Total projects</p><p className="mt-4 text-4xl font-semibold">{projects.length.toString().padStart(2, '0')}</p><p className="mt-2 text-xs text-neutral-500">Across all categories</p></div>
+                <div className="bg-white p-5 sm:p-6"><p className="text-xs font-semibold uppercase tracking-widest text-neutral-500">Published</p><p className="mt-4 flex items-center gap-2 text-4xl font-semibold">{publishedCount.toString().padStart(2, '0')}<CheckIcon className="h-5 w-5 text-emerald-700" /></p><p className="mt-2 text-xs text-neutral-500">Visible on the public site</p></div>
+                <div className="bg-white p-5 sm:p-6"><p className="text-xs font-semibold uppercase tracking-widest text-neutral-500">Unread messages</p><p className="mt-4 text-4xl font-semibold">{unreadCount.toString().padStart(2, '0')}</p><p className="mt-2 text-xs text-neutral-500">In the inquiry inbox</p></div>
+              </div>
+              <section className="mt-10">
+                <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+                  <div><p className="text-[10px] font-semibold uppercase tracking-widest text-neutral-500">Portfolio content</p><h2 className="mt-1 text-2xl font-semibold">Projects <span className="ml-1 text-base font-normal text-neutral-400">({projects.length})</span></h2></div>
+                  <div className="flex flex-col gap-2 sm:flex-row">
+                    <label className="relative block sm:w-64"><span className="sr-only">Search projects</span><MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search projects" className="h-10 w-full border border-line bg-white pl-9 pr-3 text-sm outline-none focus:border-ink" /></label>
+                    <label><span className="sr-only">Filter by publication status</span><select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="h-10 w-full border border-line bg-white px-3 text-sm outline-none focus:border-ink sm:w-auto"><option>All projects</option><option>Published</option><option>Drafts</option></select></label>
+                  </div>
+                </div>
+                <div className="mt-5 overflow-hidden border border-line bg-white">
+                  <div className="hidden grid-cols-[minmax(220px,1.5fr)_minmax(130px,1fr)_100px_130px_100px] gap-4 border-b border-line bg-neutral-50 px-5 py-3 text-[10px] font-semibold uppercase tracking-widest text-neutral-500 md:grid"><span>Project</span><span>Category</span><span>Year</span><span>Status</span><span className="text-right">Actions</span></div>
+                  {loadingData ? <p className="px-5 py-12 text-center text-sm text-neutral-500">Loading projects...</p> : visibleProjects.length ? visibleProjects.map((project) => (
+                    <article key={project.id} className="grid gap-4 border-b border-line p-4 last:border-b-0 sm:p-5 md:grid-cols-[minmax(220px,1.5fr)_minmax(130px,1fr)_100px_130px_100px] md:items-center">
+                      <div className="flex min-w-0 items-center gap-3"><span className={`hidden h-12 w-12 shrink-0 sm:block ${project.visual || 'project-visual-coral'}`} /><div className="min-w-0"><p className="truncate text-sm font-semibold">{project.name}</p><p className="mt-1 truncate text-xs text-neutral-500">{project.client}</p></div></div>
+                      <p className="text-xs text-neutral-600 md:text-sm">{project.category}</p><p className="text-xs text-neutral-600 md:text-sm">{project.year}</p>
+                      <div><button type="button" onClick={() => togglePublished(project)} className={`inline-flex items-center gap-2 px-2.5 py-1.5 text-xs font-medium transition ${project.published ? 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100' : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'}`}><span className={`h-1.5 w-1.5 rounded-full ${project.published ? 'bg-emerald-600' : 'bg-neutral-400'}`} />{project.published ? 'Published' : 'Draft'}</button></div>
+                      <div className="flex justify-end gap-1 border-t border-line pt-3 md:border-0 md:pt-0"><button type="button" onClick={() => togglePublished(project)} aria-label={project.published ? `Unpublish ${project.name}` : `Publish ${project.name}`} title={project.published ? 'Unpublish' : 'Publish'} className="flex h-9 w-9 items-center justify-center text-neutral-500 transition hover:bg-neutral-100 hover:text-ink"><EyeIcon className="h-4 w-4" /></button><button type="button" onClick={() => startEditing(project)} aria-label={`Edit ${project.name}`} title="Edit project" className="flex h-9 w-9 items-center justify-center text-neutral-500 transition hover:bg-neutral-100 hover:text-ink"><PencilSquareIcon className="h-4 w-4" /></button><button type="button" onClick={() => removeProject(project)} aria-label={`Delete ${project.name}`} title="Delete project" className="flex h-9 w-9 items-center justify-center text-neutral-500 transition hover:bg-red-50 hover:text-red-700"><TrashIcon className="h-4 w-4" /></button></div>
+                    </article>
+                  )) : <div className="px-5 py-14 text-center"><FolderIcon className="mx-auto h-8 w-8 text-neutral-400" /><p className="mt-3 text-sm font-semibold">No projects found</p><p className="mt-1 text-xs text-neutral-500">Try another search or add a project to get started.</p></div>}
+                </div>
+              </section>
+            </>
+          ) : (
+            <section>
+              <div className="mb-5"><p className="text-[10px] font-semibold uppercase tracking-widest text-neutral-500">Client inquiries</p><h2 className="mt-1 text-2xl font-semibold">Inbox <span className="ml-1 text-base font-normal text-neutral-400">({messages.length})</span></h2></div>
+              <div className="grid min-h-[480px] border border-line bg-white lg:grid-cols-[minmax(280px,0.8fr)_minmax(0,1.2fr)]">
+                <div className="border-b border-line lg:border-b-0 lg:border-r">
+                  {loadingData ? <p className="p-6 text-sm text-neutral-500">Loading messages...</p> : messages.length ? messages.map((message) => (
+                    <button key={message.id} type="button" onClick={() => openMessage(message)} className={`block w-full border-b border-line px-4 py-4 text-left transition hover:bg-neutral-50 ${selectedMessage?.id === message.id ? 'bg-neutral-100' : ''}`}>
+                      <span className="flex items-center justify-between gap-3"><span className="truncate text-sm font-semibold">{message.name}</span><span className="shrink-0 text-[10px] text-neutral-500">{formatDate(message.created_at)}</span></span>
+                      <span className="mt-1 block truncate text-xs text-neutral-500">{message.email} · {message.service_interest}</span>
+                      <span className="mt-2 flex items-center gap-2"><span className={`h-1.5 w-1.5 rounded-full ${message.is_read ? 'bg-neutral-300' : 'bg-emerald-600'}`} /><span className="text-[10px] uppercase tracking-wider text-neutral-500">{message.is_read ? 'Read' : 'New'}</span></span>
+                    </button>
+                  )) : <div className="p-8 text-center"><InboxIcon className="mx-auto h-7 w-7 text-neutral-400" /><p className="mt-3 text-sm font-semibold">No messages yet</p><p className="mt-1 text-xs text-neutral-500">New contact form submissions will appear here.</p></div>}
+                </div>
+                <div className="p-5 sm:p-8">
+                  {selectedMessage ? (
+                    <article>
+                      <div className="flex flex-wrap items-start justify-between gap-4 border-b border-line pb-5"><div><p className="text-xs font-semibold uppercase tracking-widest text-neutral-500">{selectedMessage.service_interest}</p><h3 className="mt-2 text-2xl font-semibold">{selectedMessage.name}</h3><a href={`mailto:${selectedMessage.email}`} className="mt-1 block text-sm text-neutral-600 underline underline-offset-4">{selectedMessage.email}</a></div><p className="text-xs text-neutral-500">{formatDate(selectedMessage.created_at)}</p></div>
+                      <dl className="grid gap-4 border-b border-line py-5 sm:grid-cols-2"><div><dt className="text-[10px] font-semibold uppercase tracking-widest text-neutral-500">Company</dt><dd className="mt-1 text-sm">{selectedMessage.company}</dd></div><div><dt className="text-[10px] font-semibold uppercase tracking-widest text-neutral-500">Consent</dt><dd className="mt-1 text-sm">{selectedMessage.consent ? 'Provided' : 'Not provided'}</dd></div></dl>
+                      <div className="py-6"><p className="text-[10px] font-semibold uppercase tracking-widest text-neutral-500">Message</p><p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-neutral-700">{selectedMessage.message}</p></div>
+                      <div className="flex flex-wrap gap-2 border-t border-line pt-5"><a href={`mailto:${selectedMessage.email}?subject=${encodeURIComponent(`Re: ${selectedMessage.service_interest}`)}`} className="inline-flex h-10 items-center gap-2 bg-ink px-4 text-xs font-semibold uppercase tracking-wider text-paper transition hover:bg-neutral-700">Reply by email <ArrowTopRightOnSquareIcon className="h-4 w-4" /></a><button type="button" onClick={() => toggleMessageRead(selectedMessage)} className="h-10 border border-line px-4 text-xs font-semibold uppercase tracking-wider transition hover:border-ink">Mark as {selectedMessage.is_read ? 'unread' : 'read'}</button><button type="button" onClick={() => removeMessage(selectedMessage)} className="ml-auto h-10 px-3 text-xs font-semibold uppercase tracking-wider text-red-700 transition hover:bg-red-50">Delete</button></div>
+                    </article>
+                  ) : <div className="flex h-full min-h-64 flex-col items-center justify-center text-center"><InboxIcon className="h-8 w-8 text-neutral-400" /><p className="mt-3 text-sm font-semibold">Select a message</p><p className="mt-1 text-xs text-neutral-500">Read and manage contact inquiries here.</p></div>}
+                </div>
+              </div>
+            </section>
+          )}
+        </div>
+      </main>
+      {formOpen && <ProjectForm project={editingProject} onClose={() => setFormOpen(false)} onSave={saveProject} saving={saving} error={operationError} />}
+    </div>
+  )
+}
+
+export default function AdminPage() {
+  const [session, setSession] = useState(null)
+  const [authLoading, setAuthLoading] = useState(Boolean(supabase))
+  const [adminChecking, setAdminChecking] = useState(true)
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [authError, setAuthError] = useState('')
+
+  useEffect(() => {
+    if (!supabase) return undefined
+
+    let active = true
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      if (!active) return
+      setSession(nextSession)
+      if (nextSession) setAdminChecking(true)
+      else setIsAdmin(false)
+    })
+
+    supabase.auth.getSession().then(({ data, error }) => {
+      if (!active) return
+      if (error) setAuthError('Could not restore the admin session. Please sign in again.')
+      setSession(data.session)
+      setAuthLoading(false)
+    }).catch(() => {
+      if (!active) return
+      setAuthError('Could not restore the admin session. Please sign in again.')
+      setAuthLoading(false)
+    })
+
+    return () => {
+      active = false
+      subscription.unsubscribe()
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!supabase || !session) return undefined
+    let active = true
+    supabase.rpc('is_admin').then(({ data, error }) => {
+      if (!active) return
+      setIsAdmin(data === true)
+      setAuthError(error ? 'Admin access could not be verified. Apply the Supabase schema and allowlist this account.' : '')
+      setAdminChecking(false)
+    }).catch(() => {
+      if (!active) return
+      setAuthError('Admin access could not be verified. Check the Supabase connection and schema.')
+      setAdminChecking(false)
+    })
+    return () => { active = false }
+  }, [session])
+
+  if (authLoading) return <main className="flex min-h-screen items-center justify-center text-sm text-neutral-500">Checking session...</main>
+  if (!session) return <AdminLogin />
+  if (adminChecking) return <main className="flex min-h-screen items-center justify-center text-sm text-neutral-500">Verifying administrator access...</main>
+  if (!isAdmin) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-[#f3f3ef] px-5">
+        <section className="max-w-md border border-line bg-paper p-8 text-center">
+          <h1 className="text-2xl font-semibold">Admin access required</h1>
+          <p className="mt-3 text-sm text-neutral-600">{authError || 'This account is not authorized to use the admin workspace.'}</p>
+          <button type="button" onClick={() => supabase.auth.signOut()} className="mt-6 bg-ink px-5 py-3 text-xs font-semibold uppercase tracking-widest text-paper">Sign out</button>
+        </section>
+      </main>
+    )
+  }
+
+  return <AdminWorkspace onSignOut={() => supabase.auth.signOut()} />
+}

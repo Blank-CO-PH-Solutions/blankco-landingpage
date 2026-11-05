@@ -5,12 +5,20 @@ const companyLinks = [
   { label: 'Home', to: '/' },
   { label: 'About', to: '/about' },
   { label: 'Services', to: '/services' },
+  { label: 'Projects', to: '/projects' },
   { label: 'Contact', to: '/contact-us' },
 ]
 
 export default function Footer() {
   return (
     <footer className="border-t border-line bg-ink text-paper">
+      <section className="border-b border-paper/10 px-6 py-12 text-center sm:py-14">
+        <p className="text-xs font-semibold uppercase tracking-widest text-paper/50">Our promise</p>
+        <h2 className="mx-auto mt-3 max-w-3xl text-2xl font-semibold leading-tight sm:text-3xl">
+          If it isn&apos;t solved, we aren&apos;t done.
+        </h2>
+        <p className="mt-3 text-sm text-paper/60">Straight answers, real results, done right.</p>
+      </section>
       <div className="mx-auto grid max-w-6xl gap-10 px-6 py-12 sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <p className="leading-none">

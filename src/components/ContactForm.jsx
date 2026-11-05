@@ -1,8 +1,9 @@
-import axios from 'axios'
 import { useState } from 'react'
+import { createMessage } from '../data/messages'
 
 export default function ContactForm() {
   const [submitted, setSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState({var: '', message: ''});
 
   const [name, setName] = useState('');
@@ -13,7 +14,7 @@ export default function ContactForm() {
   const [consent, setConsent] = useState(false);
 
   function clearError(field) {
-    if (error.var === field) setError({ var: '', message: '' });
+    if (error.var === field || error.var === '') setError({ var: '', message: '' });
   }
 
   function validate() {
@@ -23,23 +24,23 @@ export default function ContactForm() {
 
     const errors = [];
 
-    if (!NAME_REGEX.test(name)) {
+    if (!NAME_REGEX.test(name.trim())) {
       errors.push({ var: 'name', message: 'Please enter a valid name.' });
     }
 
-    if (!EMAIL_REGEX.test(email)) {
+    if (!EMAIL_REGEX.test(email.trim()) || email.length > 254) {
       errors.push({ var: 'email', message: 'Please enter a valid email address.' });
     }
 
-    if (!COMPANY_REGEX.test(company)) {
+    if (!COMPANY_REGEX.test(company.trim())) {
       errors.push({ var: 'company', message: 'Please enter a valid company name.' });
     }
 
-    if (serviceInterest.length < 10 || serviceInterest.length > 300) {
+    if (serviceInterest.trim().length < 10 || serviceInterest.trim().length > 300) {
       errors.push({ var: 'serviceInterest', message: 'Please briefly describe what you need help with (10–300 characters).' });
     }
 
-    if (message.length < 20 || message.length > 500) {
+    if (message.trim().length < 20 || message.trim().length > 500) {
       errors.push({ var: 'message', message: 'Please provide more details about your request (20–500 characters).' });
     }
 
@@ -49,6 +50,21 @@ export default function ContactForm() {
 
     setError(errors[0] ?? { var: '', message: '' });
     return errors.length === 0;
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault()
+    if (!validate()) return
+
+    setIsSubmitting(true)
+    try {
+      await createMessage({ name, email, company, serviceInterest, message, consent })
+      setSubmitted(true)
+    } catch {
+      setError({ var: '', message: 'Something went wrong sending your inquiry. Please try again.' })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   if (submitted) {
@@ -64,23 +80,7 @@ export default function ContactForm() {
     <form
       className="grid gap-6"
       noValidate
-      
-      onSubmit={(e) => {
-        e.preventDefault()
-
-        if (!validate()) return
-
-        axios.post('http://localhost:3000/api/leads', {
-          name,
-          email,
-          company,
-          serviceInterest,
-          message,
-          consent,
-        }, { timeout: 10000 })
-          .then(() => setSubmitted(true))
-          .catch(() => setError({ var: '', message: 'Something went wrong sending your inquiry. Please try again.' }))
-      }}
+      onSubmit={handleSubmit}
     >
       <div className="grid gap-6 sm:grid-cols-2">
         <div>
@@ -91,6 +91,7 @@ export default function ContactForm() {
             id="name"
             type="text"
             required
+            maxLength={100}
             className="mt-2 w-full border border-line bg-paper px-4 py-3 focus:border-ink focus:outline-none"
             placeholder="Your name"
           />
@@ -106,6 +107,7 @@ export default function ContactForm() {
             id="email"
             type="email"
             required
+            maxLength={254}
             className="mt-2 w-full border border-line bg-paper px-4 py-3 focus:border-ink focus:outline-none"
             placeholder="you@company.com"
           />
@@ -122,9 +124,10 @@ export default function ContactForm() {
             id="company"
             type="text" 
             required 
+            maxLength={100}
             className='mt-2 w-full border border-line bg-paper px-4 py-3 focus:border-ink focus:outline-none'
             placeholder='Your Company'
-            pattern=".{10,}"
+            pattern=".{2,100}"
           />
           {error.var === 'company' && (
             <span className="mt-2 block text-sm text-red-500">{error.message}</span>
@@ -138,6 +141,7 @@ export default function ContactForm() {
             id="serviceInterest"
             type="text" 
             required 
+            maxLength={300}
             className='mt-2 w-full border border-line bg-paper px-4 py-3 focus:border-ink focus:outline-none'
             placeholder='Brief information of what can we help you with.'
           />
@@ -154,6 +158,7 @@ export default function ContactForm() {
           value={message}
           id="message"
           required
+          maxLength={500}
           rows={6}
           className="mt-2 w-full resize-none border border-line bg-paper px-4 py-3 focus:border-ink focus:outline-none"
           placeholder="Tell us more information of your problem or request."
@@ -167,7 +172,7 @@ export default function ContactForm() {
         <label htmlFor="consent" className="text-sm font-medium uppercase tracking-widest text-neutral-500">
           <input 
             onChange={(e) => { setConsent(e.target.checked); clearError('consent'); }}
-            value={consent}
+            checked={consent}
             className=""
             type="checkbox" name="consent" id="consent" required />
           <span> I agree to submit my information</span>
@@ -178,14 +183,15 @@ export default function ContactForm() {
       </div>
 
       {error.var === '' && error.message && (
-        <span className="mt-2 block text-sm text-red-500">{error.message}</span>
+        <span role="alert" className="mt-2 block text-sm text-red-500">{error.message}</span>
       )}
 
       <button
         type="submit"
-        className="w-full bg-ink px-8 py-4 text-sm font-semibold uppercase tracking-widest text-paper transition hover:bg-neutral-800"
+        disabled={isSubmitting}
+        className="w-full bg-ink px-8 py-4 text-sm font-semibold uppercase tracking-widest text-paper transition hover:bg-neutral-800 disabled:cursor-wait disabled:opacity-60"
       >
-        Send inquiry
+        {isSubmitting ? 'Sending...' : 'Send inquiry'}
       </button>
     </form>
   )

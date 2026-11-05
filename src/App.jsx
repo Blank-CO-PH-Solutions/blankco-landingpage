@@ -3,7 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import Header from './components/Header'
 import Footer from './components/Footer'
 
-const navOrder = ['/', '/about', '/services', '/contact-us']
+const navOrder = ['/', '/about', '/services', '/projects', '/contact-us']
 
 function App() {
   const location = useLocation()
