@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { services } from '../data/services'
+import AdminTerminal from './AdminTerminal'
 
 const companyLinks = [
   { label: 'Home', to: '/' },
@@ -74,7 +75,10 @@ export default function Footer() {
             <p className="mt-1 text-sm font-semibold text-paper">If it isn&apos;t solved, we aren&apos;t done.</p>
             <p className="mt-1 text-paper/60">Straight answers, real results, done right.</p>
           </div>
-          <p className="uppercase tracking-widest sm:text-right">Clear thinking. Better work.</p>
+          <div className="flex items-center justify-center gap-3 sm:justify-end">
+            <p className="uppercase tracking-widest">Clear thinking. Better work.</p>
+            <AdminTerminal />
+          </div>
         </div>
       </div>
     </footer>
