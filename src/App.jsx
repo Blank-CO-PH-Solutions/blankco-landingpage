@@ -14,28 +14,28 @@ function navigationIndex(pathname) {
 
 const seoPages = {
   '/': {
-    title: 'Blank CO PH Solutions | Strategy, Automation & Digital Products',
-    description: 'Blank CO PH Solutions helps Philippine businesses improve operations with practical business strategy, workflow automation, digital products, and ongoing support.',
+    title: 'BlankCO PH Solutions | Web Development & Digital Solutions',
+    description: 'BlankCO PH Solutions helps Philippine businesses improve operations through web development, custom software, workflow automation, and digital solutions.',
   },
   '/about': {
-    title: 'About Blank CO PH Solutions | Cagayan, Philippines',
-    description: 'Meet Blank CO PH Solutions, a student-led digital solutions team based in Baggao, Cagayan, building practical tools and better business operations.',
+    title: 'About BlankCO PH Solutions | Cagayan, Philippines',
+    description: 'Meet BlankCO PH Solutions, a student-led digital solutions team based in Baggao, Cagayan, building practical tools and better business operations.',
   },
   '/services': {
-    title: 'Business Strategy, Automation & Digital Services | Blank CO',
-    description: 'Explore business strategy, workflow automation, digital product development, and ongoing support from Blank CO PH Solutions in the Philippines.',
+    title: 'Business Strategy, Automation & Digital Services | BlankCO',
+    description: 'Explore business strategy, workflow automation, digital product development, and ongoing support from BlankCO PH Solutions in the Philippines.',
   },
   '/projects': {
-    title: 'Our Projects | Blank CO PH Solutions',
-    description: 'Explore selected digital products, workflow systems, and business projects built by Blank CO PH Solutions and its collaborators.',
+    title: 'Our Projects | BlankCO PH Solutions',
+    description: 'Explore selected digital products, workflow systems, and business projects built by BlankCO PH Solutions and its collaborators.',
   },
   '/members': {
-    title: 'Meet the Team | Blank CO PH Solutions',
-    description: 'Meet the people behind Blank CO PH Solutions: a student-led team creating practical digital solutions in Cagayan, Philippines.',
+    title: 'Meet the Team | BlankCO PH Solutions',
+    description: 'Meet the people behind BlankCO PH Solutions: a student-led team creating practical digital solutions in Cagayan, Philippines.',
   },
   '/contact-us': {
-    title: 'Contact Blank CO PH Solutions | Start a Project',
-    description: 'Contact Blank CO PH Solutions to discuss business strategy, workflow automation, a digital product, or ongoing support for your team.',
+    title: 'Contact BlankCO PH Solutions | Start a Project',
+    description: 'Contact BlankCO PH Solutions to discuss business strategy, workflow automation, a digital product, or ongoing support for your team.',
   },
 }
 
@@ -73,7 +73,7 @@ function App() {
     const service = serviceSlug ? services.find((item) => item.slug === serviceSlug) : null
     const page = service
       ? {
-          title: `${service.title} | Blank CO PH Solutions`,
+          title: `${service.title} | BlankCO PH Solutions`,
           description: service.description,
         }
       : seoPages[pathname] || seoPages['/']
@@ -86,7 +86,7 @@ function App() {
     setMeta('property', 'og:description', page.description)
     setMeta('property', 'og:url', canonicalUrl)
     setMeta('property', 'og:type', 'website')
-    setMeta('property', 'og:site_name', 'Blank CO PH Solutions')
+    setMeta('property', 'og:site_name', 'BlankCO PH Solutions')
     setMeta('name', 'twitter:card', 'summary')
     setMeta('name', 'twitter:title', page.title)
     setMeta('name', 'twitter:description', page.description)
