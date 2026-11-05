@@ -6,20 +6,14 @@ const companyLinks = [
   { label: 'About', to: '/about' },
   { label: 'Services', to: '/services' },
   { label: 'Projects', to: '/projects' },
+  { label: 'Members', to: '/members' },
   { label: 'Contact', to: '/contact-us' },
 ]
 
 export default function Footer() {
   return (
     <footer className="border-t border-line bg-ink text-paper">
-      <section className="border-b border-paper/10 px-6 py-12 text-center sm:py-14">
-        <p className="text-xs font-semibold uppercase tracking-widest text-paper/50">Our promise</p>
-        <h2 className="mx-auto mt-3 max-w-3xl text-2xl font-semibold leading-tight sm:text-3xl">
-          If it isn&apos;t solved, we aren&apos;t done.
-        </h2>
-        <p className="mt-3 text-sm text-paper/60">Straight answers, real results, done right.</p>
-      </section>
-      <div className="mx-auto grid max-w-6xl gap-10 px-6 py-12 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mx-auto grid max-w-6xl gap-10 px-6 py-12 sm:grid-cols-2 lg:grid-cols-5">
         <div>
           <p className="leading-none">
             <span className="block text-xl font-bold tracking-tight">Blank CO<span className="text-paper/40">.</span></span>
@@ -61,16 +55,26 @@ export default function Footer() {
           <p className="text-xs font-semibold uppercase tracking-widest text-paper/50">Contact</p>
           <ul className="mt-4 space-y-2 text-sm text-paper/70">
             <li>blankco.ph@gmail.com</li>
-            <li>+63 (0) 000 000 0000</li>
+            <li>+639531743347</li>
             <li>Baggao, Cagayan, Philippines</li>
           </ul>
+        </div>
+
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-widest text-paper/50">Members</p>
+          <Link to="/members" className="mt-4 inline-block text-sm text-paper/70 transition hover:text-paper">Meet the team</Link>
         </div>
       </div>
 
       <div className="border-t border-paper/10">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-6 py-5 text-xs text-paper/50 sm:flex-row">
+        <div className="mx-auto grid max-w-6xl gap-4 px-6 py-6 text-center text-xs text-paper/50 sm:grid-cols-[1fr_minmax(0,2fr)_1fr] sm:items-center sm:text-left">
           <p>&copy; {new Date().getFullYear()} Blank CO PH Solutions. All rights reserved.</p>
-          <p className="uppercase tracking-widest">Clear thinking. Better work.</p>
+          <div className="text-center">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-paper/40">Our promise</p>
+            <p className="mt-1 text-sm font-semibold text-paper">If it isn&apos;t solved, we aren&apos;t done.</p>
+            <p className="mt-1 text-paper/60">Straight answers, real results, done right.</p>
+          </div>
+          <p className="uppercase tracking-widest sm:text-right">Clear thinking. Better work.</p>
         </div>
       </div>
     </footer>

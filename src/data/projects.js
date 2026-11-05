@@ -15,8 +15,6 @@ export async function listProjects({ publishedOnly = false } = {}) {
       .eq('published', true)
       .not('github_url', 'is', null)
       .neq('github_url', '')
-      .not('live_site_url', 'is', null)
-      .neq('live_site_url', '')
   }
 
   const { data, error } = await query

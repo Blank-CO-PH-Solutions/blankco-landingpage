@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { listProjects } from '../data/projects'
 import ProjectLinks from '../components/ProjectLinks'
+import ProjectSitePreview from '../components/ProjectSitePreview'
 
 export default function ProjectsPage() {
   const [activeCategory, setActiveCategory] = useState('All work')
@@ -32,6 +33,7 @@ export default function ProjectsPage() {
       : projects.filter((project) => project.category === activeCategory),
     [activeCategory, projects],
   )
+  const carouselGroups = [visibleProjects, visibleProjects, visibleProjects]
 
   return (
     <div>
@@ -74,25 +76,32 @@ export default function ProjectsPage() {
         ) : loadError ? (
           <p role="alert" className="mt-12 border border-line p-6 text-sm text-neutral-600">{loadError}</p>
         ) : visibleProjects.length > 0 ? (
-          <div className="mt-8 grid gap-x-8 gap-y-12 md:grid-cols-2">
-            {visibleProjects.map((project, index) => (
-              <article key={project.id} className="group">
-                <div className={`project-visual ${project.visual || 'project-visual-coral'} relative flex aspect-[1.42] items-end overflow-hidden p-6 sm:p-8`}>
-                  <span className="absolute right-6 top-6 text-xs font-semibold uppercase tracking-widest text-ink/60">{project.year}</span>
-                  <span className="project-visual-mark" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
-                  <span className="relative max-w-[70%] text-3xl font-semibold leading-tight text-ink sm:text-4xl">{project.name}</span>
-                  <span className="absolute bottom-6 right-6 flex h-10 w-10 items-center justify-center rounded-full border border-ink/30 text-xl transition group-hover:-translate-y-1 group-hover:translate-x-1 sm:bottom-8 sm:right-8">↗</span>
+          <div className="project-carousel mt-8 overflow-hidden" role="region" aria-label="Projects carousel" tabIndex={0}>
+            <div className="project-carousel-track flex w-max">
+              {carouselGroups.map((group, groupIndex) => (
+                <div key={`${activeCategory}-${groupIndex}`} className="project-carousel-group flex shrink-0 gap-8 pr-8" aria-hidden={groupIndex > 0} inert={groupIndex > 0}>
+                  {group.map((project, index) => (
+                    <article key={`${groupIndex}-${project.id}`} aria-roledescription="slide" className="group w-[min(82vw,560px)] shrink-0">
+                      <div className={`project-visual ${project.visual || 'project-visual-coral'} relative flex aspect-[1.42] items-end overflow-hidden p-6 sm:p-8`}>
+                        <ProjectSitePreview project={project} />
+                        <span className="absolute right-6 top-6 z-20 text-xs font-semibold uppercase tracking-widest text-ink/60">{project.year}</span>
+                        <span className="project-visual-mark" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+                        <span className="relative z-20 max-w-[70%] text-3xl font-semibold leading-tight text-ink sm:text-4xl">{project.name}</span>
+                        <span className="absolute bottom-6 right-6 flex h-10 w-10 items-center justify-center rounded-full border border-ink/30 text-xl transition group-hover:-translate-y-1 group-hover:translate-x-1 sm:bottom-8 sm:right-8">↗</span>
+                      </div>
+                      <div className="flex flex-col justify-between gap-4 border-b border-line py-5 sm:flex-row sm:items-start">
+                        <div>
+                          <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500">{project.category} <span className="mx-2">/</span> {project.client}</p>
+                          <p className="mt-3 max-w-xl text-sm leading-6 text-neutral-600">{project.description}</p>
+                          <ProjectLinks project={project} />
+                        </div>
+                        <span className="shrink-0 text-sm font-medium text-neutral-500">{project.year}</span>
+                      </div>
+                    </article>
+                  ))}
                 </div>
-                <div className="flex flex-col justify-between gap-4 border-b border-line py-5 sm:flex-row sm:items-start">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500">{project.category} <span className="mx-2">/</span> {project.client}</p>
-                    <p className="mt-3 max-w-xl text-sm leading-6 text-neutral-600">{project.description}</p>
-                    <ProjectLinks project={project} />
-                  </div>
-                  <span className="shrink-0 text-sm font-medium text-neutral-500">{project.year}</span>
-                </div>
-              </article>
-            ))}
+              ))}
+            </div>
           </div>
         ) : (
           <div className="border-b border-line py-16 text-center">
