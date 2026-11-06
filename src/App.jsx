@@ -8,7 +8,11 @@ const siteUrl = 'https://blankcoph.solutions'
 const navigationOrder = ['/', '/about', '/services', '/projects', '/members', '/contact-us']
 
 function navigationIndex(pathname) {
-  const section = pathname.startsWith('/services/') ? '/services' : pathname
+  const section = pathname.startsWith('/services/')
+    ? '/services'
+    : pathname.startsWith('/team/')
+      ? '/members'
+      : pathname
   return navigationOrder.indexOf(section)
 }
 
@@ -71,12 +75,18 @@ function App() {
   useEffect(() => {
     const serviceSlug = pathname.startsWith('/services/') ? pathname.split('/')[2] : null
     const service = serviceSlug ? services.find((item) => item.slug === serviceSlug) : null
+    const teamMemberId = pathname.startsWith('/team/') ? pathname.split('/')[2] : null
     const page = service
       ? {
           title: `${service.title} | BlankCO PH Solutions`,
           description: service.description,
         }
-      : seoPages[pathname] || seoPages['/']
+      : teamMemberId
+        ? {
+            title: 'Team Member | BlankCO PH Solutions',
+            description: 'Meet a member of BlankCO PH Solutions, a student-led digital solutions team based in Baggao, Cagayan, Philippines.',
+          }
+        : seoPages[pathname] || seoPages['/']
     const canonicalUrl = `${siteUrl}${pathname === '/' ? '/' : pathname}`
 
     document.title = page.title

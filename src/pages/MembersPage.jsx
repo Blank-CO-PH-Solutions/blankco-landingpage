@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { ArrowTopRightOnSquareIcon, UserGroupIcon } from '@heroicons/react/24/outline'
-import MemberProfileModal from '../components/MemberProfileModal'
 import { getGithubAvatarUrl, listTeamMembers } from '../data/teamMembers'
 
 function MemberAvatar({ member, size = 'h-20 w-20' }) {
@@ -18,7 +18,6 @@ function MemberAvatar({ member, size = 'h-20 w-20' }) {
 
 export default function MembersPage() {
   const [members, setMembers] = useState([])
-  const [selectedMember, setSelectedMember] = useState(null)
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState('')
 
@@ -59,22 +58,27 @@ export default function MembersPage() {
               <article
                 key={member.id}
                 style={{ animationDelay: `${index * 80}ms` }}
-                className="page-enter-up flex min-w-0 flex-col border border-line bg-paper p-6 transition-transform duration-300 hover:-translate-y-1 hover:shadow-[8px_8px_0_0_#0a0a0a] sm:p-8"
+                className="page-enter-up relative flex min-w-0 flex-col border border-line bg-paper p-6 transition-transform duration-300 hover:-translate-y-1 hover:shadow-[8px_8px_0_0_#0a0a0a] sm:p-8"
               >
-                <button type="button" onClick={() => setSelectedMember(member)} className="flex w-full items-center gap-4 text-left" aria-label={`View ${member.name}'s profile`}>
-                  <MemberAvatar member={member} />
-                  <span className="min-w-0">
-                    <span className="block truncate text-lg font-semibold">{member.name}</span>
-                    <span className="mt-1 block text-sm text-neutral-500">{member.position}</span>
-                    {member.location && <span className="mt-1 block truncate text-xs text-neutral-500">{member.location}</span>}
-                    <span className="mt-2 block text-xs font-semibold uppercase tracking-wider text-neutral-600">View profile</span>
-                  </span>
-                </button>
-                <div className="mt-6 flex flex-wrap gap-x-5 gap-y-3 border-t border-line pt-4">
-                  <a href={member.github_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-neutral-700 underline decoration-neutral-300 underline-offset-4 hover:text-ink hover:decoration-ink">GitHub <ArrowTopRightOnSquareIcon className="h-4 w-4" /></a>
+                <Link to={`/team/${member.id}`} aria-label={`View ${member.name}'s profile`} className="absolute inset-0 z-10">
+                  <span className="sr-only">View profile</span>
+                </Link>
+
+                <MemberAvatar member={member} size="h-20 w-20" />
+                <h2 className="mt-4 text-lg font-semibold leading-tight">{member.name}</h2>
+                <p className="mt-1 text-sm text-neutral-600">{member.position}</p>
+                {member.location && (
+                  <p className="mt-1 text-sm text-neutral-500">{member.location}</p>
+                )}
+
+                <div className="relative z-20 mt-6 flex flex-wrap gap-x-5 gap-y-3 border-t border-line pt-4">
+                  {member.github_url && <a href={member.github_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-neutral-700 underline decoration-neutral-300 underline-offset-4 hover:text-ink hover:decoration-ink">GitHub <ArrowTopRightOnSquareIcon className="h-4 w-4" /></a>}
                   {member.portfolio_url && <a href={member.portfolio_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-neutral-700 underline decoration-neutral-300 underline-offset-4 hover:text-ink hover:decoration-ink">Portfolio <ArrowTopRightOnSquareIcon className="h-4 w-4" /></a>}
                 </div>
                 {member.skills?.length > 0 && <div className="mt-4 flex flex-wrap gap-2">{member.skills.slice(0, 4).map((skill) => <span key={skill} className="border border-line px-2.5 py-1 text-[10px] text-neutral-600">{skill}</span>)}</div>}
+                <span className="mt-6 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-ink">
+                  View profile <span aria-hidden="true">→</span>
+                </span>
               </article>
             ))}
           </div>
@@ -85,7 +89,6 @@ export default function MembersPage() {
           </div>
         )}
       </section>
-      {selectedMember && <MemberProfileModal key={selectedMember.id} member={selectedMember} onClose={() => setSelectedMember(null)} />}
     </div>
   )
 }

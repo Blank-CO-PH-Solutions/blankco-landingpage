@@ -21,6 +21,21 @@ export async function listTeamMembers({ publishedOnly = false } = {}) {
   return data || []
 }
 
+// Function to get a single team member by ID
+export async function getTeamMemberById(id, { publishedOnly = false } = {}) {
+  let query = requireSupabase()
+    .from('team_members')
+    .select('*')
+    .eq('id', id)
+
+  if (publishedOnly) query = query.eq('is_published', true)
+
+  const { data, error } = await query.maybeSingle()
+
+  if (error) throw error
+  return data || null
+}
+
 export async function saveTeamMember(member) {
   const client = requireSupabase()
   const { id } = member
