@@ -18,7 +18,7 @@ const organizationStructuredData = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'Blank CO PH Solutions',
-  url: 'https://blankco-landingpage.vercel.app',
+  url: 'https://blankcoph.solutions',
   email: 'blankco.ph@gmail.com',
   address: {
     '@type': 'PostalAddress',
