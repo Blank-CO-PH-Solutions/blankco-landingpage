@@ -25,8 +25,10 @@ const organizationStructuredData = {
   email: 'hello@blankcoph.solutions',
   address: {
     '@type': 'PostalAddress',
+    streetAddress: 'San Jose',
     addressLocality: 'Baggao',
     addressRegion: 'Cagayan',
+    postalCode: '3506',
     addressCountry: 'PH',
   },
   sameAs: [
