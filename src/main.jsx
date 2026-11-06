@@ -20,6 +20,8 @@ const organizationStructuredData = {
   '@type': 'Organization',
   name: 'Blank CO PH Solutions',
   url: 'https://blankcoph.solutions',
+  logo: 'https://blankcoph.solutions/logo.png',
+  image: 'https://blankcoph.solutions/logo.png',
   email: 'hello@blankcoph.solutions',
   address: {
     '@type': 'PostalAddress',
