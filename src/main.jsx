@@ -50,7 +50,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="/services/:slug" element={<ServiceDetailPage />} />
           <Route path="/projects" element={<ProjectsPage />} />
           <Route path="/members" element={<MembersPage />} />
-          <Route path="/team/:id" element={<MemberProfilePage />} />
+          <Route path="/team/:slug" element={<MemberProfilePage />} />
           <Route path="/contact-us" element={<ContactUsPage />} />
         </Route>
         <Route path="/admin" element={<AdminRoute />} />

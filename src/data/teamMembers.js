@@ -36,6 +36,29 @@ export async function getTeamMemberById(id, { publishedOnly = false } = {}) {
   return data || null
 }
 
+const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+export function getTeamMemberSlug(member) {
+  const slug = (member.name || '')
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+
+  return slug || member.id
+}
+
+// Function to get a single team member by name-based slug.
+// UUIDs are still accepted so older links keep working.
+export async function getTeamMemberBySlug(slug, { publishedOnly = true } = {}) {
+  if (!slug) return null
+  if (uuidPattern.test(slug)) return getTeamMemberById(slug, { publishedOnly })
+
+  const members = await listTeamMembers({ publishedOnly })
+  return members.find((member) => getTeamMemberSlug(member) === slug.toLowerCase()) || null
+}
+
 export async function saveTeamMember(member) {
   const client = requireSupabase()
   const { id } = member

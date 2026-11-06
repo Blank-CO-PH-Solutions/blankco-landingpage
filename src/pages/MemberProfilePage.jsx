@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { ArrowLeftIcon, ArrowTopRightOnSquareIcon, EnvelopeIcon, MapPinIcon } from '@heroicons/react/24/outline'
 import ContactSection from '../components/ContactSection'
-import { getGithubAvatarUrl, getTeamMemberById } from '../data/teamMembers'
+import { getGithubAvatarUrl, getTeamMemberBySlug } from '../data/teamMembers'
 
 function setMeta(attribute, key, content) {
   let element = document.head.querySelector(`meta[${attribute}="${key}"]`)
@@ -35,26 +35,26 @@ function MemberAvatar({ member }) {
 }
 
 export default function MemberProfilePage() {
-  const { id } = useParams()
-  const [result, setResult] = useState({ id: null, member: null, error: '' })
+  const { slug } = useParams()
+  const [result, setResult] = useState({ slug: null, member: null, error: '' })
 
   useEffect(() => {
     let active = true
 
-    getTeamMemberById(id, { publishedOnly: true })
+    getTeamMemberBySlug(slug, { publishedOnly: true })
       .then((data) => {
-        if (active) setResult({ id, member: data, error: '' })
+        if (active) setResult({ slug, member: data, error: '' })
       })
       .catch(() => {
-        if (active) setResult({ id, member: null, error: 'Team profile could not be loaded right now. Please try again later.' })
+        if (active) setResult({ slug, member: null, error: 'Team profile could not be loaded right now. Please try again later.' })
       })
 
     return () => { active = false }
-  }, [id])
+  }, [slug])
 
-  const loading = result.id !== id
-  const member = result.id === id ? result.member : null
-  const loadError = result.id === id ? result.error : ''
+  const loading = result.slug !== slug
+  const member = result.slug === slug ? result.member : null
+  const loadError = result.slug === slug ? result.error : ''
 
   useEffect(() => {
     if (!member) return

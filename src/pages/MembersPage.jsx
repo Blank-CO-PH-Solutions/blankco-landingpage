@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowTopRightOnSquareIcon, UserGroupIcon } from '@heroicons/react/24/outline'
-import { getGithubAvatarUrl, listTeamMembers } from '../data/teamMembers'
+import { getGithubAvatarUrl, getTeamMemberSlug, listTeamMembers } from '../data/teamMembers'
 
 function MemberAvatar({ member, size = 'h-20 w-20' }) {
   const [imageFailed, setImageFailed] = useState(false)
@@ -60,7 +60,7 @@ export default function MembersPage() {
                 style={{ animationDelay: `${index * 80}ms` }}
                 className="page-enter-up relative flex min-w-0 flex-col border border-line bg-paper p-6 transition-transform duration-300 hover:-translate-y-1 hover:shadow-[8px_8px_0_0_#0a0a0a] sm:p-8"
               >
-                <Link to={`/team/${member.id}`} aria-label={`View ${member.name}'s profile`} className="absolute inset-0 z-10">
+                <Link to={`/team/${getTeamMemberSlug(member)}`} aria-label={`View ${member.name}'s profile`} className="absolute inset-0 z-10">
                   <span className="sr-only">View profile</span>
                 </Link>
 
