@@ -42,7 +42,7 @@ export default function HomeProjectsSection() {
                     <div className={`project-visual ${project.visual || 'project-visual-coral'} relative flex aspect-[1.4] items-end overflow-hidden p-6`}>
                       <ProjectSitePreview project={project} />
                       <span className="project-visual-mark" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
-                      <span className="relative z-20 max-w-[80%] text-2xl font-semibold leading-tight text-ink">{project.name}</span>
+                      <span className="relative top-2 z-20 max-w-[80%] text-lg font-semibold leading-tight text-ink">{project.name}</span>
                       <span className="absolute right-5 top-5 z-20 text-xs font-semibold uppercase tracking-wider text-ink/60">{project.year}</span>
                     </div>
                     <p className="mt-4 text-xs font-semibold uppercase tracking-widest text-neutral-500">{project.category} <span className="mx-2">/</span> {project.client}</p>

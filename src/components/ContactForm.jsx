@@ -126,7 +126,7 @@ export default function ContactForm() {
             required 
             maxLength={100}
             className='mt-2 w-full border border-line bg-paper px-4 py-3 focus:border-ink focus:outline-none'
-            placeholder='Your Company'
+            placeholder='Your company name'
             pattern=".{2,100}"
           />
           {error.var === 'company' && (
@@ -135,13 +135,14 @@ export default function ContactForm() {
         </div>
         <div>
           <label htmlFor="serviceInterest" className="text-sm font-medium uppercase tracking-widest text-neutral-500">How do you need help with?</label>
-          <input
+          <textarea
             onChange={(e) => { setServiceInterest(e.target.value); clearError('serviceInterest'); }}
             value={serviceInterest}
             id="serviceInterest"
             type="text" 
             required 
             maxLength={300}
+            rows={4}
             className='mt-2 w-full border border-line bg-paper px-4 py-3 focus:border-ink focus:outline-none'
             placeholder='Brief information of what can we help you with.'
           />

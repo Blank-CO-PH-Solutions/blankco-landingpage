@@ -16,7 +16,7 @@ export default function ProjectSitePreview({ project }) {
               <div className="flex h-full flex-col px-2 py-2 text-[7px] text-neutral-800">
                 <div className="flex items-center justify-between font-semibold"><span>9:41</span><span>● ● ●</span></div>
                 <div className="mt-2 text-[6px] text-neutral-500">WELCOME BACK</div>
-                <div className="mt-0.5 text-[9px] font-bold leading-tight">{project.name}</div>
+                <div className="mt-0.5 text-[5px] font-bold leading-tight">{project.name}</div>
                 <div className="mt-2 rounded-md bg-emerald-50 p-1.5">
                   <span className="block text-[6px] font-semibold text-emerald-800">Today&apos;s status</span>
                   <span className="mt-0.5 block text-[8px] font-bold text-emerald-900">Ready to check in</span>

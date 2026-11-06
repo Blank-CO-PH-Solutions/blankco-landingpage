@@ -19,7 +19,7 @@ const organizationStructuredData = {
   '@type': 'Organization',
   name: 'Blank CO PH Solutions',
   url: 'https://blankcoph.solutions',
-  email: 'blankco.ph@gmail.com',
+  email: 'hello@blankcoph.solutions',
   address: {
     '@type': 'PostalAddress',
     addressLocality: 'Baggao',
