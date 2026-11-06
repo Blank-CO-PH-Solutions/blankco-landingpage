@@ -498,7 +498,7 @@ function MemberForm({ member, onClose, onSave, saving, error }) {
           <div className="flex flex-col items-center border-b border-line pb-5 text-center">
             <div className="relative flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-neutral-200 text-xl font-semibold text-neutral-600">
               <span>{values.name.trim().split(/\s+/).map((part) => part[0]).join('').slice(0, 2).toUpperCase() || '??'}</span>
-              {avatarUrl && <img src={avatarUrl} alt="" onError={(event) => { event.currentTarget.style.display = 'none' }} className="absolute inset-0 h-full w-full object-cover" />}
+              {avatarUrl && <img src={avatarUrl} alt={values.name.trim() ? `${values.name.trim()} profile` : 'Team member profile'} onError={(event) => { event.currentTarget.style.display = 'none' }} className="absolute inset-0 h-full w-full object-cover" />}
             </div>
             <p className="mt-2 text-xs text-neutral-500">Uses the GitHub photo unless a custom one is uploaded.</p>
             <div className="mt-3 flex flex-wrap justify-center gap-3">
@@ -941,7 +941,7 @@ function AdminWorkspace({ onSignOut }) {
                       <div className="flex min-w-0 items-center gap-3">
                         <div className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-neutral-200 text-xs font-semibold text-neutral-600">
                           <span>{member.name.split(/\s+/).map((part) => part[0]).join('').slice(0, 2).toUpperCase()}</span>
-                          {avatarUrl && <img src={avatarUrl} alt="" onError={(event) => { event.currentTarget.style.display = 'none' }} className="absolute inset-0 h-full w-full object-cover" />}
+                          {avatarUrl && <img src={avatarUrl} alt={`${member.name} profile`} onError={(event) => { event.currentTarget.style.display = 'none' }} className="absolute inset-0 h-full w-full object-cover" />}
                         </div>
                         <div className="min-w-0"><p className="truncate text-sm font-semibold">{member.name}</p><p className="mt-1 truncate text-xs text-neutral-500">{member.position}</p></div>
                       </div>

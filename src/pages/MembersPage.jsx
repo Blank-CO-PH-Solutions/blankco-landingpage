@@ -11,7 +11,7 @@ function MemberAvatar({ member, size = 'h-20 w-20' }) {
   return (
     <span className={`relative inline-flex ${size} shrink-0 items-center justify-center overflow-hidden rounded-full bg-neutral-200 font-semibold text-neutral-600`}>
       <span>{initials}</span>
-      {avatarUrl && !imageFailed && <img src={avatarUrl} alt="" onError={() => setImageFailed(true)} className="absolute inset-0 h-full w-full object-cover" />}
+      {avatarUrl && !imageFailed && <img src={avatarUrl} alt={`${member.name} profile`} onError={() => setImageFailed(true)} className="absolute inset-0 h-full w-full object-cover" />}
     </span>
   )
 }
