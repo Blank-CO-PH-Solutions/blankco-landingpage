@@ -18,7 +18,7 @@ import { services } from './data/services.js'
 const organizationStructuredData = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  name: 'Blank CO PH Solutions',
+  name: 'BlankCO PH Solutions',
   url: 'https://www.blankcoph.solutions',
   logo: 'https://www.blankcoph.solutions/logo.png',
   image: 'https://www.blankcoph.solutions/logo.png',
