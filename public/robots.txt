@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin
 
-Sitemap: https://blankcoph.solutions/sitemap.xml
+Sitemap: https://www.blankcoph.solutions/sitemap.xml

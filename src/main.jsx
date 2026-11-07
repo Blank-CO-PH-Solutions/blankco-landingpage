@@ -19,9 +19,9 @@ const organizationStructuredData = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'Blank CO PH Solutions',
-  url: 'https://blankcoph.solutions',
-  logo: 'https://blankcoph.solutions/logo.png',
-  image: 'https://blankcoph.solutions/logo.png',
+  url: 'https://www.blankcoph.solutions',
+  logo: 'https://www.blankcoph.solutions/logo.png',
+  image: 'https://www.blankcoph.solutions/logo.png',
   email: 'hello@blankcoph.solutions',
   address: {
     '@type': 'PostalAddress',

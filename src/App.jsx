@@ -4,7 +4,7 @@ import Header from './components/Header'
 import Footer from './components/Footer'
 import { services } from './data/services'
 
-const siteUrl = 'https://blankcoph.solutions'
+const siteUrl = 'https://www.blankcoph.solutions'
 const navigationOrder = ['/', '/about', '/services', '/projects', '/members', '/contact-us']
 
 function navigationIndex(pathname) {
