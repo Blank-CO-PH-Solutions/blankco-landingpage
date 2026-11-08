@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/team/:slug",
+      "destination": "/team/:slug/index.html"
+    },
+    {
+      "source": "/team/:slug/",
+      "destination": "/team/:slug/index.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/"
     }
