@@ -13,6 +13,8 @@ import ContactUsPage from './pages/ContactUsPage.jsx'
 import ProjectsPage from './pages/ProjectsPage.jsx'
 import MembersPage from './pages/MembersPage.jsx'
 import MemberProfilePage from './pages/MemberProfilePage.jsx'
+import TermsPage from './pages/TermsPage.jsx'
+import PrivacyPage from './pages/PrivacyPage.jsx'
 import { services } from './data/services.js'
 
 const organizationStructuredData = {
@@ -52,6 +54,8 @@ createRoot(document.getElementById('root')).render(
           <Route path="/members" element={<MembersPage />} />
           <Route path="/team/:slug" element={<MemberProfilePage />} />
           <Route path="/contact-us" element={<ContactUsPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
         </Route>
         <Route path="/admin" element={<AdminRoute />} />
       </Routes>

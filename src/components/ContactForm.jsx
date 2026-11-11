@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { createMessage } from '../data/messages'
 
 export default function ContactForm() {
@@ -176,7 +177,7 @@ export default function ContactForm() {
             checked={consent}
             className=""
             type="checkbox" name="consent" id="consent" required />
-          <span> I agree to submit my information</span>
+          <span> I agree to submit my information and acknowledge the <Link to="/privacy" onClick={(event) => event.stopPropagation()} className="underline underline-offset-4 hover:text-ink">Privacy Policy</Link>.</span>
         </label>
         {error.var === 'consent' && (
           <span className="mt-2 block text-sm text-red-500">{error.message}</span>

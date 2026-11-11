@@ -41,6 +41,14 @@ const seoPages = {
     title: 'Contact BlankCO PH Solutions | Start a Project',
     description: 'Contact BlankCO PH Solutions to discuss business strategy, workflow automation, a digital product, or ongoing support for your team.',
   },
+  '/terms': {
+    title: 'Terms of Use | BlankCO PH Solutions',
+    description: 'Read the terms that govern your use of the BlankCO PH Solutions website and services.',
+  },
+  '/privacy': {
+    title: 'Privacy Policy | BlankCO PH Solutions',
+    description: 'Learn how BlankCO PH Solutions collects, uses, stores, and protects personal information.',
+  },
 }
 
 function setMeta(attribute, key, content) {

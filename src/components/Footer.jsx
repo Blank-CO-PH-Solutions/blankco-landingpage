@@ -62,8 +62,18 @@ export default function Footer() {
         </div>
 
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-paper/50">Members</p>
-          <Link to="/members" className="mt-4 inline-block text-sm text-paper/70 transition hover:text-paper">Meet the team</Link>
+          <p className="text-xs font-semibold uppercase tracking-widest text-paper/50">More</p>
+          <ul className="mt-4 space-y-2 text-sm">
+            <li>
+              <Link to="/members" className="text-paper/70 transition hover:text-paper">Meet the team</Link>
+            </li>
+            <li>
+              <Link to="/terms" className="text-paper/70 transition hover:text-paper">Terms of Use</Link>
+            </li>
+            <li>
+              <Link to="/privacy" className="text-paper/70 transition hover:text-paper">Privacy Policy</Link>
+            </li>
+          </ul>
         </div>
       </div>
 
