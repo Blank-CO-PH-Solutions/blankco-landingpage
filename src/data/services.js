@@ -40,6 +40,20 @@ export const services = [
   },
   {
     number: '04',
+    title: 'IoT Development',
+    slug: 'iot-development',
+    text: 'Connect devices and operations with practical IoT systems that collect, monitor, and act on real-world data.',
+    description: 'Internet of Things projects connect sensors, devices, and software so you can monitor operations, automate responses, and make decisions from reliable real-time data. We help scope, build, and integrate practical IoT solutions — from simple sensor dashboards to connected devices and alerting systems.',
+    whatWeDo: [
+      'IoT project scoping and feasibility',
+      'Sensor and microcontroller integration',
+      'Device-to-cloud connectivity',
+      'Real-time monitoring dashboards',
+      'Automated alerts and remote control',
+    ],
+  },
+  {
+    number: '05',
     title: 'Ongoing Support',
     slug: 'ongoing-support',
     text: 'Keep your systems dependable with thoughtful maintenance, improvements, and responsive support.',

@@ -14,7 +14,7 @@ export default function ServicesPage() {
           <Link
             key={service.number}
             to={`/services/${service.slug}`}
-            className="group relative block bg-paper p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-[8px_8px_0_0_#0a0a0a] sm:p-10"
+            className="group relative block bg-paper p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-[8px_8px_0_0_#0a0a0a] sm:p-10 sm:last:col-span-2"
           >
             <p className="text-sm font-semibold tracking-widest text-neutral-400 transition-colors duration-300 group-hover:text-neutral-200">
               {service.number}
