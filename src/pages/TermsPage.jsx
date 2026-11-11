@@ -144,7 +144,29 @@ export default function TermsPage() {
         </p>
       </LegalSection>
 
-      <LegalSection title="14. Contact Us">
+      <LegalSection title="14. Copyright and Intellectual Property Complaints">
+        <p>
+          If you believe that content on this website infringes your copyright or other intellectual property rights,
+          contact us at{' '}
+          <a href="mailto:hello@blankcoph.solutions" className="font-medium text-ink underline underline-offset-4">
+            hello@blankcoph.solutions
+          </a>{' '}
+          with enough detail for us to review the claim, including:
+        </p>
+        <ul className="list-disc space-y-2 pl-5">
+          <li>identification of the work or right you believe is infringed;</li>
+          <li>the URL or location of the allegedly infringing material;</li>
+          <li>your name and contact information;</li>
+          <li>a statement that you have a good-faith belief the use is unauthorized; and</li>
+          <li>a statement that the information in your notice is accurate.</li>
+        </ul>
+        <p>
+          We will review the notice and take appropriate action, which may include removing or disabling access to the
+          material while the claim is assessed.
+        </p>
+      </LegalSection>
+
+      <LegalSection title="15. Contact Us">
         <p>
           If you have questions about these terms, contact BlankCO PH Solutions at{' '}
           <a href="mailto:hello@blankcoph.solutions" className="font-medium text-ink underline underline-offset-4">
