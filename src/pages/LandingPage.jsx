@@ -42,7 +42,7 @@ const expectations = [
 const faqs = [
   {
     q: 'What can Blank CO help with?',
-    a: 'We work on business strategy, workflow automation, websites, digital tools, IoT systems, and the operating challenges around them. If your team has outgrown a process or needs a better way to work, let’s talk.',
+    a: 'We work on business strategy, workflow automation, websites, apps, bots, IoT systems, and the operating challenges around them. If your team has outgrown a process or needs a better way to work, let’s talk.',
   },
   {
     q: 'How fast can you start?',
@@ -141,7 +141,7 @@ export default function LandingPage() {
               <Link
                 key={service.number}
                 to={`/services/${service.slug}`}
-                className="group relative block bg-paper p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-[8px_8px_0_0_#0a0a0a] sm:p-10 sm:last:col-span-2"
+                className={`group relative block bg-paper p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-[8px_8px_0_0_#0a0a0a] sm:p-10 ${services.length % 2 ? 'sm:last:col-span-2' : ''}`}
               >
                 <p className="text-sm font-semibold tracking-widest text-neutral-400 transition-colors duration-300 group-hover:text-neutral-200">
                   {service.number}

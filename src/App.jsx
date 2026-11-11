@@ -26,8 +26,8 @@ const seoPages = {
     description: 'Meet BlankCO PH Solutions, a student-led digital solutions team based in Baggao, Cagayan, building practical tools and better business operations.',
   },
   '/services': {
-    title: 'Business Strategy, Automation & IoT Services | BlankCO',
-    description: 'Explore business strategy, workflow automation, digital product development, IoT solutions, and ongoing support from BlankCO PH Solutions in the Philippines.',
+    title: 'Web, App, Bot, IoT & Automation Services | BlankCO',
+    description: 'Explore web development, app development, bot development, IoT solutions, workflow automation, and ongoing support from BlankCO PH Solutions in the Philippines.',
   },
   '/projects': {
     title: 'Our Projects | BlankCO PH Solutions',
@@ -39,7 +39,7 @@ const seoPages = {
   },
   '/contact-us': {
     title: 'Contact BlankCO PH Solutions | Start a Project',
-    description: 'Contact BlankCO PH Solutions to discuss business strategy, workflow automation, a digital product, IoT development, or ongoing support for your team.',
+    description: 'Contact BlankCO PH Solutions to discuss business strategy, workflow automation, web, app, bot, or IoT development, or ongoing support for your team.',
   },
   '/terms': {
     title: 'Terms of Use | BlankCO PH Solutions',

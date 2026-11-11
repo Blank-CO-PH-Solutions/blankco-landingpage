@@ -19,7 +19,7 @@ export default function TermsPage() {
       <LegalSection title="2. About Us">
         <p>
           BlankCO PH Solutions is a student-led digital solutions team based in San Jose, Baggao, Cagayan, Philippines.
-          We provide services related to business strategy, workflow automation, digital products, IoT development, and ongoing support.
+          We provide services related to business strategy, workflow automation, digital products, web development, app development, bot development, IoT development, and ongoing support.
         </p>
         <p>
           These terms apply to this website. They do not replace any separate written agreement, proposal, statement of
