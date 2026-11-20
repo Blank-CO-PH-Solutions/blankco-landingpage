@@ -2,9 +2,8 @@ import { useEffect, useState } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import Header from './components/Header'
 import Footer from './components/Footer'
-import { services } from './data/services'
+import { defaultImage, resolveSeo } from './seo'
 
-const siteUrl = 'https://www.blankcoph.solutions'
 const navigationOrder = ['/', '/about', '/services', '/projects', '/members', '/contact-us']
 
 function navigationIndex(pathname) {
@@ -16,41 +15,6 @@ function navigationIndex(pathname) {
   return navigationOrder.indexOf(section)
 }
 
-const seoPages = {
-  '/': {
-    title: 'BlankCO PH Solutions | Web Development & Digital Solutions',
-    description: 'BlankCO PH Solutions helps Philippine businesses improve operations through web development, custom software, workflow automation, and digital solutions.',
-  },
-  '/about': {
-    title: 'About BlankCO PH Solutions | Cagayan, Philippines',
-    description: 'Meet BlankCO PH Solutions, a student-led digital solutions team based in Baggao, Cagayan, building practical tools and better business operations.',
-  },
-  '/services': {
-    title: 'Web, App, Bot, IoT & Automation Services | BlankCO',
-    description: 'Explore web development, app development, bot development, IoT solutions, workflow automation, and ongoing support from BlankCO PH Solutions in the Philippines.',
-  },
-  '/projects': {
-    title: 'Our Projects | BlankCO PH Solutions',
-    description: 'Explore selected digital products, workflow systems, and business projects built by BlankCO PH Solutions and its collaborators.',
-  },
-  '/members': {
-    title: 'Meet the Team | BlankCO PH Solutions',
-    description: 'Meet the people behind BlankCO PH Solutions: a student-led team creating practical digital solutions in Cagayan, Philippines.',
-  },
-  '/contact-us': {
-    title: 'Contact BlankCO PH Solutions | Start a Project',
-    description: 'Contact BlankCO PH Solutions to discuss business strategy, workflow automation, web, app, bot, or IoT development, or ongoing support for your team.',
-  },
-  '/terms': {
-    title: 'Terms of Use | BlankCO PH Solutions',
-    description: 'Read the terms that govern your use of the BlankCO PH Solutions website and services.',
-  },
-  '/privacy': {
-    title: 'Privacy Policy | BlankCO PH Solutions',
-    description: 'Learn how BlankCO PH Solutions collects, uses, stores, and protects personal information.',
-  },
-}
-
 function setMeta(attribute, key, content) {
   let element = document.head.querySelector(`meta[${attribute}="${key}"]`)
   if (!element) {
@@ -59,6 +23,10 @@ function setMeta(attribute, key, content) {
     document.head.appendChild(element)
   }
   element.setAttribute('content', content)
+}
+
+function removeMeta(attribute, key) {
+  document.head.querySelectorAll(`meta[${attribute}="${key}"]`).forEach((element) => element.remove())
 }
 
 function App() {
@@ -81,41 +49,42 @@ function App() {
   }
 
   useEffect(() => {
-    const serviceSlug = pathname.startsWith('/services/') ? pathname.split('/')[2] : null
-    const service = serviceSlug ? services.find((item) => item.slug === serviceSlug) : null
-    const teamMemberId = pathname.startsWith('/team/') ? pathname.split('/')[2] : null
-    const page = service
-      ? {
-          title: `${service.title} | BlankCO PH Solutions`,
-          description: service.description,
-        }
-      : teamMemberId
-        ? {
-            title: 'Team Member | BlankCO PH Solutions',
-            description: 'Meet a member of BlankCO PH Solutions, a student-led digital solutions team based in Baggao, Cagayan, Philippines.',
-          }
-        : seoPages[pathname] || seoPages['/']
-    const canonicalUrl = `${siteUrl}${pathname === '/' ? '/' : pathname}`
+    const page = resolveSeo(pathname)
+    const description = String(page.description || '').replace(/\s+/g, ' ').trim()
 
     document.title = page.title
-    setMeta('name', 'description', page.description)
-    setMeta('name', 'robots', 'index,follow,max-image-preview:large')
+    setMeta('name', 'description', description)
+    setMeta('name', 'robots', page.robots)
+    setMeta('name', 'googlebot', page.robots)
     setMeta('property', 'og:title', page.title)
-    setMeta('property', 'og:description', page.description)
-    setMeta('property', 'og:url', canonicalUrl)
-    setMeta('property', 'og:type', 'website')
+    setMeta('property', 'og:description', description)
+    setMeta('property', 'og:type', page.type || 'website')
     setMeta('property', 'og:site_name', 'BlankCO PH Solutions')
+    setMeta('property', 'og:image', page.image || defaultImage)
+    setMeta('property', 'og:image:alt', `${page.title} social preview`)
     setMeta('name', 'twitter:card', 'summary')
     setMeta('name', 'twitter:title', page.title)
-    setMeta('name', 'twitter:description', page.description)
+    setMeta('name', 'twitter:description', description)
+    setMeta('name', 'twitter:image', page.image || defaultImage)
 
-    let canonical = document.head.querySelector('link[rel="canonical"]')
-    if (!canonical) {
-      canonical = document.createElement('link')
-      canonical.rel = 'canonical'
-      document.head.appendChild(canonical)
+    if (page.canonical) {
+      setMeta('property', 'og:url', page.canonical)
+      let canonical = document.head.querySelector('link[rel="canonical"]')
+      if (!canonical) {
+        canonical = document.createElement('link')
+        canonical.rel = 'canonical'
+        document.head.appendChild(canonical)
+      }
+      canonical.href = page.canonical
+    } else {
+      // Non-indexable pages (for example a 404) should not advertise a canonical.
+      removeMeta('property', 'og:url')
+      document.head.querySelectorAll('link[rel="canonical"]').forEach((element) => element.remove())
     }
-    canonical.href = canonicalUrl
+
+    // Keep the site-wide Organization reference available on every page.
+    setMeta('name', 'application-name', 'BlankCO PH Solutions')
+    setMeta('name', 'author', 'BlankCO PH Solutions')
   }, [pathname])
 
   return (

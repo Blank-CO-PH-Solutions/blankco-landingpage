@@ -49,3 +49,10 @@ The app uses Supabase for project records, contact inquiries, and admin authenti
 5. Sign in at `/admin`. The dashboard checks both the Supabase Auth session and the `admin_users` allowlist. RLS independently protects project writes and the message inbox.
 
 Public visitors can submit contact inquiries, read published projects, and view published team profiles at `/members`, with each member's full profile at `/team/:slug`. In the admin project form, enter a GitHub username, organization, or profile URL to browse, search, and import its public repositories and declared homepages. Published projects need a valid GitHub URL; a live-site URL is optional for native apps. The attendance-checker Flutter app uses a mobile preview fallback. Admins can manage projects, member resumes and skills, uploaded member photos, and client messages. Replies open the visitor's email address in the configured mail app.
+
+## Build and search indexing
+
+`npm run build` runs the Vite client build and then [`scripts/prerender.mjs`](scripts/prerender.mjs). The prerenderer writes static HTML for every public route — home, about, services, each service detail, projects, members, each team profile, contact, terms, and privacy — with route-specific titles, descriptions, canonical URLs, Open Graph tags, and rendered body content. It also writes `dist/sitemap.xml`, a real `dist/404.html`, and a noindex admin shell.
+
+Team and project content is fetched from Supabase at build time. Keep `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` available to the build environment so team pages and the sitemap are complete. If the credentials are set but Supabase cannot be reached, the build stops instead of publishing an incomplete sitemap.
+

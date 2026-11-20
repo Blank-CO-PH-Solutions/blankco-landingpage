@@ -1,5 +1,7 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
+
+const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect
 
 const links = [
   { label: 'Home', to: '/' },
@@ -16,7 +18,7 @@ export default function Header() {
   const desktopNavRef = useRef(null)
   const activeIndicatorRef = useRef(null)
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const nav = desktopNavRef.current
     const indicator = activeIndicatorRef.current
     if (!nav || !indicator) return undefined

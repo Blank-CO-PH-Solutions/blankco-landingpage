@@ -1,64 +1,20 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import App from './App.jsx'
+import { BrowserRouter } from 'react-router-dom'
+import AppRoutes from './routes.jsx'
+import { setPreloadedData } from './data/preloaded'
 
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import AdminRoute from './components/AdminRoute.jsx'
-import LandingPage from './pages/LandingPage.jsx'
-import AboutPage from './pages/AboutPage.jsx'
-import ServicesPage from './pages/ServicesPage.jsx'
-import ServiceDetailPage from './pages/ServiceDetailPage.jsx'
-import ContactUsPage from './pages/ContactUsPage.jsx'
-import ProjectsPage from './pages/ProjectsPage.jsx'
-import MembersPage from './pages/MembersPage.jsx'
-import MemberProfilePage from './pages/MemberProfilePage.jsx'
-import TermsPage from './pages/TermsPage.jsx'
-import PrivacyPage from './pages/PrivacyPage.jsx'
-import { services } from './data/services.js'
-
-const organizationStructuredData = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: 'BlankCO PH Solutions',
-  url: 'https://www.blankcoph.solutions',
-  logo: 'https://www.blankcoph.solutions/logo.png',
-  image: 'https://www.blankcoph.solutions/logo.png',
-  email: 'hello@blankcoph.solutions',
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: 'San Jose',
-    addressLocality: 'Baggao',
-    addressRegion: 'Cagayan',
-    postalCode: '3506',
-    addressCountry: 'PH',
-  },
-  sameAs: [
-    'https://github.com/Blank-CO-PH-Solutions',
-    'https://github.com/nathaniel-ramos-dev',
-  ],
-  knowsAbout: services.map((service) => service.title),
+// Data embedded by the build-time prerenderer. Seeding it before the first
+// render keeps the client output aligned with the static HTML.
+if (typeof window !== 'undefined' && window.__BLANKCO_DATA__) {
+  setPreloadedData(window.__BLANKCO_DATA__)
 }
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
-      <script type="application/ld+json">{JSON.stringify(organizationStructuredData)}</script>
-      <Routes>
-        <Route element={<App />}>
-          <Route index element={<LandingPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/services" element={<ServicesPage />} />
-          <Route path="/services/:slug" element={<ServiceDetailPage />} />
-          <Route path="/projects" element={<ProjectsPage />} />
-          <Route path="/members" element={<MembersPage />} />
-          <Route path="/team/:slug" element={<MemberProfilePage />} />
-          <Route path="/contact-us" element={<ContactUsPage />} />
-          <Route path="/terms" element={<TermsPage />} />
-          <Route path="/privacy" element={<PrivacyPage />} />
-        </Route>
-        <Route path="/admin" element={<AdminRoute />} />
-      </Routes>
+      <AppRoutes />
     </BrowserRouter>
   </StrictMode>,
 )

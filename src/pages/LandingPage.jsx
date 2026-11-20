@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { services } from '../data/services'
 import ContactSection from '../components/ContactSection'
 import HomeProjectsSection from '../components/HomeProjectsSection'
+import HomeTeamSection from '../components/HomeTeamSection'
 
 const values = [
   { title: 'Clear thinking', text: 'We make the work understandable: what matters, what comes next, and why.' },
@@ -129,6 +130,8 @@ export default function LandingPage() {
       </section>
 
       <HomeProjectsSection />
+
+      <HomeTeamSection />
 
       <section id="services" className="border-b border-line">
         <div className="mx-auto max-w-6xl px-6 py-24">

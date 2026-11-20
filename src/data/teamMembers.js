@@ -112,6 +112,16 @@ export async function deleteTeamMember(id) {
   if (error) throw error
 }
 
+/**
+ * Supabase text fields can contain the literal string "null" from older
+ * records. Treat those (and similar placeholders) as empty.
+ */
+export function cleanMemberText(value) {
+  const text = typeof value === 'string' ? value.trim() : ''
+  if (!text || /^(null|undefined|n\/a|none)$/i.test(text)) return ''
+  return text
+}
+
 export function getGithubAvatarUrl(githubUrl) {
   try {
     const url = new URL(githubUrl)

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowTopRightOnSquareIcon, UserGroupIcon } from '@heroicons/react/24/outline'
-import { getGithubAvatarUrl, getTeamMemberSlug, listTeamMembers } from '../data/teamMembers'
+import { cleanMemberText, getGithubAvatarUrl, getTeamMemberSlug, listTeamMembers } from '../data/teamMembers'
+import { getPreloadedTeamMembers } from '../data/preloaded'
 
 function MemberAvatar({ member, size = 'h-20 w-20' }) {
   const [imageFailed, setImageFailed] = useState(false)
@@ -17,11 +18,14 @@ function MemberAvatar({ member, size = 'h-20 w-20' }) {
 }
 
 export default function MembersPage() {
-  const [members, setMembers] = useState([])
-  const [loading, setLoading] = useState(true)
+  const preloadedMembers = getPreloadedTeamMembers()
+  const [members, setMembers] = useState(preloadedMembers || [])
+  const [loading, setLoading] = useState(!preloadedMembers)
   const [loadError, setLoadError] = useState('')
 
   useEffect(() => {
+    if (preloadedMembers) return undefined
+
     let active = true
     listTeamMembers({ publishedOnly: true })
       .then((items) => {
@@ -35,7 +39,7 @@ export default function MembersPage() {
       })
 
     return () => { active = false }
-  }, [])
+  }, [preloadedMembers])
 
   return (
     <div>
@@ -67,8 +71,8 @@ export default function MembersPage() {
                 <MemberAvatar member={member} size="h-20 w-20" />
                 <h2 className="mt-4 text-lg font-semibold leading-tight">{member.name}</h2>
                 <p className="mt-1 text-sm text-neutral-600">{member.position}</p>
-                {member.location && (
-                  <p className="mt-1 text-sm text-neutral-500">{member.location}</p>
+                {cleanMemberText(member.location) && (
+                  <p className="mt-1 text-sm text-neutral-500">{cleanMemberText(member.location)}</p>
                 )}
 
                 <div className="relative z-20 mt-6 flex flex-wrap gap-x-5 gap-y-3 border-t border-line pt-4">

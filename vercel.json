@@ -1,16 +1,45 @@
 {
+  "trailingSlash": false,
   "rewrites": [
+    {
+      "source": "/about",
+      "destination": "/about/index.html"
+    },
+    {
+      "source": "/services",
+      "destination": "/services/index.html"
+    },
+    {
+      "source": "/services/:slug",
+      "destination": "/services/:slug/index.html"
+    },
+    {
+      "source": "/projects",
+      "destination": "/projects/index.html"
+    },
+    {
+      "source": "/members",
+      "destination": "/members/index.html"
+    },
     {
       "source": "/team/:slug",
       "destination": "/team/:slug/index.html"
     },
     {
-      "source": "/team/:slug/",
-      "destination": "/team/:slug/index.html"
+      "source": "/contact-us",
+      "destination": "/contact-us/index.html"
     },
     {
-      "source": "/(.*)",
-      "destination": "/"
+      "source": "/terms",
+      "destination": "/terms/index.html"
+    },
+    {
+      "source": "/privacy",
+      "destination": "/privacy/index.html"
+    },
+    {
+      "source": "/admin",
+      "destination": "/admin/index.html"
     }
   ]
 }

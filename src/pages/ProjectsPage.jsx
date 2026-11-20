@@ -1,16 +1,20 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { listProjects } from '../data/projects'
+import { getPreloadedProjects } from '../data/preloaded'
 import ProjectLinks from '../components/ProjectLinks'
 import ProjectSitePreview from '../components/ProjectSitePreview'
 
 export default function ProjectsPage() {
+  const preloadedProjects = getPreloadedProjects()
   const [activeCategory, setActiveCategory] = useState('All work')
-  const [projects, setProjects] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [projects, setProjects] = useState(preloadedProjects || [])
+  const [loading, setLoading] = useState(!preloadedProjects)
   const [loadError, setLoadError] = useState('')
 
   useEffect(() => {
+    if (preloadedProjects) return undefined
+
     let active = true
     listProjects({ publishedOnly: true })
       .then((items) => {
@@ -24,7 +28,7 @@ export default function ProjectsPage() {
       })
 
     return () => { active = false }
-  }, [])
+  }, [preloadedProjects])
 
   const categories = ['All work', ...new Set(projects.map((project) => project.category))]
   const visibleProjects = useMemo(

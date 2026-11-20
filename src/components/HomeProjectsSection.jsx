@@ -1,13 +1,17 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { listProjects } from '../data/projects'
+import { getPreloadedProjects } from '../data/preloaded'
 import ProjectLinks from './ProjectLinks'
 import ProjectSitePreview from './ProjectSitePreview'
 
 export default function HomeProjectsSection() {
-  const [projects, setProjects] = useState([])
+  const preloadedProjects = getPreloadedProjects()
+  const [projects, setProjects] = useState(preloadedProjects || [])
 
   useEffect(() => {
+    if (preloadedProjects) return undefined
+
     let active = true
     listProjects({ publishedOnly: true })
       .then((items) => {
@@ -16,7 +20,7 @@ export default function HomeProjectsSection() {
       .catch(() => {})
 
     return () => { active = false }
-  }, [])
+  }, [preloadedProjects])
 
   if (!projects.length) return null
   const carouselGroups = [projects, projects, projects]
