@@ -55,16 +55,38 @@ function requireSupabase() {
 }
 
 export async function createMessage(message) {
-  const { error } = await requireSupabase().from('messages').insert({
-    name: message.name.trim(),
-    email: message.email.trim(),
-    company: message.company.trim(),
-    service_interest: message.serviceInterest.trim(),
-    message: message.message.trim(),
-    consent: message.consent,
-  })
+  // The insert policy allows anonymous inserts but not reads, so the client
+  // chooses the id and passes it to the email notifier.
+  const id = crypto.randomUUID()
+  const { error } = await requireSupabase()
+    .from('messages')
+    .insert({
+      id,
+      name: message.name.trim(),
+      email: message.email.trim(),
+      company: message.company.trim(),
+      service_interest: message.serviceInterest.trim(),
+      message: message.message.trim(),
+      consent: message.consent,
+    })
 
   if (error) throw error
+  await notifyTicketByEmail(id)
+  return { id }
+}
+
+/**
+ * Asks the `notify-ticket` Edge Function to email the support inbox.
+ * Best effort: the ticket is already stored, so email failures must not fail
+ * the customer's submission.
+ */
+async function notifyTicketByEmail(id) {
+  try {
+    const { error } = await requireSupabase().functions.invoke('notify-ticket', { body: { id } })
+    if (error) console.warn('Ticket email notification failed', error.message)
+  } catch (error) {
+    console.warn('Ticket email notification failed', error)
+  }
 }
 
 export async function listMessages() {
