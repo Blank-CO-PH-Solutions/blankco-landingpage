@@ -30,13 +30,6 @@ export default function ContactSection() {
               >
                 Open customer portal ↗
               </a>
-              <button
-                type="button"
-                onClick={() => setTicketOpen(true)}
-                className="border border-ink px-6 py-3 text-xs font-semibold uppercase tracking-widest text-ink transition hover:bg-ink hover:text-paper"
-              >
-                Submit a support ticket
-              </button>
             </div>
           </div>
           <div className="mt-6 flex flex-wrap gap-4">
