@@ -48,7 +48,15 @@ The app uses Supabase for project records, contact inquiries, and admin authenti
 
 5. Sign in at `/admin`. The dashboard checks both the Supabase Auth session and the `admin_users` allowlist. RLS independently protects project writes and the message inbox.
 
-Public visitors can submit contact inquiries, read published projects, and view published team profiles at `/members`, with each member's full profile at `/team/:slug`. In the admin project form, enter a GitHub username, organization, or profile URL to browse, search, and import its public repositories and declared homepages. Published projects need a valid GitHub URL; a live-site URL is optional for native apps. The attendance-checker Flutter app uses a mobile preview fallback. Admins can manage projects, member resumes and skills, uploaded member photos, and client messages. Replies open the visitor's email address in the configured mail app.
+Public visitors can submit contact inquiries, read published projects, and view published team profiles at `/members`, with each member's full profile at `/team/:slug`. The contact page also links to the customer portal at `/portal/` and offers a support-ticket dialog that writes directly into the admin inbox.
+
+### Customer portal and support tickets
+
+- `/portal/` is the customer portal built from the sibling `../CPL` repository. `npm run build` runs `scripts/sync-portal.mjs`, builds that app with `VITE_BASE_PATH=/portal/`, and copies it to `public/portal`. When the sibling checkout is absent, the committed `public/portal` build is used.
+- Visitors can submit a ticket from the contact page, and signed-in portal customers can submit one from the portal. Both paths insert a `CPL support`-prefixed row into `public.messages`, which appears in **Admin → Messages** with a “Portal ticket” badge. `VITE_PORTAL_URL` can override the portal link.
+- Admin access has no visible link. Press **Ctrl+Shift+A** (or **Cmd+Shift+A**) to open the access console and type `admin`. The `/admin` route still performs Supabase auth plus the `admin_users` allowlist check.
+
+In the admin project form, enter a GitHub username, organization, or profile URL to browse, search, and import its public repositories and declared homepages. Published projects need a valid GitHub URL; a live-site URL is optional for native apps. The attendance-checker Flutter app uses a mobile preview fallback. Admins can manage projects, member resumes and skills, uploaded member photos, and client messages. Replies open the visitor's email address in the configured mail app.
 
 ## Build and search indexing
 

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { CommandLineIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { XMarkIcon } from '@heroicons/react/24/outline'
 import { useNavigate } from 'react-router-dom'
 
 export default function AdminTerminal() {
@@ -59,9 +59,6 @@ export default function AdminTerminal() {
 
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)} aria-label="Open admin console" title="Open admin console" className="flex h-8 w-8 items-center justify-center text-paper/40 transition hover:text-paper/80">
-        <CommandLineIcon className="h-4 w-4" />
-      </button>
       {open && (
         <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/70 p-4" onMouseDown={(event) => event.target === event.currentTarget && setOpen(false)}>
           <section role="dialog" aria-modal="true" aria-labelledby="admin-terminal-title" className="w-full max-w-2xl overflow-hidden border border-emerald-900 bg-[#07100c] font-mono text-emerald-300 shadow-2xl">

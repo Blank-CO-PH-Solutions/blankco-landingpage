@@ -1,6 +1,12 @@
+import { useState } from 'react'
 import ContactForm from './ContactForm'
+import TicketDialog from './TicketDialog'
+
+const portalUrl = import.meta.env.VITE_PORTAL_URL || '/portal/'
 
 export default function ContactSection() {
+  const [ticketOpen, setTicketOpen] = useState(false)
+
   return (
     <div className="mx-auto max-w-6xl px-6 py-24">
       <div className="grid gap-16 lg:grid-cols-2">
@@ -12,7 +18,28 @@ export default function ContactSection() {
           <p className="mt-6 max-w-md text-neutral-500">
             Share the challenge, the opportunity, or the idea. We&apos;ll help you decide whether Blank CO is the right partner for the next step.
           </p>
-          <div className="mt-10 flex flex-wrap gap-4">
+          <div className="mt-8 border border-line bg-paper p-6">
+            <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500">Already a customer?</p>
+            <p className="mt-2 text-sm text-neutral-600">Open the customer portal to track orders, invoices, and payments — or send a support ticket without leaving this page.</p>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <a
+                href={portalUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="bg-ink px-6 py-3 text-xs font-semibold uppercase tracking-widest text-paper transition hover:bg-neutral-800"
+              >
+                Open customer portal ↗
+              </a>
+              <button
+                type="button"
+                onClick={() => setTicketOpen(true)}
+                className="border border-ink px-6 py-3 text-xs font-semibold uppercase tracking-widest text-ink transition hover:bg-ink hover:text-paper"
+              >
+                Submit a support ticket
+              </button>
+            </div>
+          </div>
+          <div className="mt-6 flex flex-wrap gap-4">
             <a
               href="mailto:hello@blankcoph.solutions"
               className="bg-ink px-8 py-3 text-sm font-semibold uppercase tracking-widest text-paper transition hover:bg-neutral-800"
@@ -45,6 +72,7 @@ export default function ContactSection() {
           <ContactForm />
         </div>
       </div>
+      {ticketOpen && <TicketDialog open onClose={() => setTicketOpen(false)} />}
     </div>
   )
 }
