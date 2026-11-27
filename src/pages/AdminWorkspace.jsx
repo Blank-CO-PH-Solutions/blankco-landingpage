@@ -15,6 +15,7 @@ import {
 } from '@heroicons/react/24/outline'
 import { Link } from 'react-router-dom'
 import { deleteMessage, isPortalTicket, listMessages, setMessageRead } from '../data/messages'
+import { getChatThread, sendChatReply } from '../data/chat'
 import { deleteProject, listProjects, saveProject as saveProjectRecord, updateProject } from '../data/projects'
 import { fetchGithubProfile, githubRepositoryToProject, listGithubRepositories } from '../data/github'
 import { deleteTeamMember, getGithubAvatarUrl, listTeamMembers, saveTeamMember, uploadTeamMemberAvatar } from '../data/teamMembers'
@@ -646,6 +647,53 @@ function AdminWorkspace({ onSignOut }) {
   const [memberSaving, setMemberSaving] = useState(false)
   const [operationError, setOperationError] = useState('')
   const [dataError, setDataError] = useState('')
+  const [chatConversation, setChatConversation] = useState(null)
+  const [chatLoading, setChatLoading] = useState(false)
+  const [chatSending, setChatSending] = useState(false)
+  const [chatReply, setChatReply] = useState('')
+  const [chatError, setChatError] = useState('')
+
+  const selectedMessageId = selectedMessage?.id || null
+
+  useEffect(() => {
+    if (!selectedMessageId) return undefined
+    let active = true
+    const load = async () => {
+      try {
+        const conversation = await getChatThread(selectedMessageId)
+        if (active) setChatConversation(conversation)
+      } catch (error) {
+        if (active) setChatError(error.message || 'The conversation could not be loaded.')
+      } finally {
+        if (active) setChatLoading(false)
+      }
+    }
+    void load()
+    const interval = window.setInterval(() => void load(), 3000)
+    return () => {
+      active = false
+      window.clearInterval(interval)
+    }
+  }, [selectedMessageId])
+
+  const submitChatReply = async (event) => {
+    event.preventDefault()
+    if (!selectedMessageId || chatReply.trim().length < 20) {
+      setChatError('Replies must be at least 20 characters.')
+      return
+    }
+    setChatSending(true)
+    setChatError('')
+    try {
+      await sendChatReply(selectedMessageId, chatReply.trim())
+      setChatReply('')
+      setChatConversation(await getChatThread(selectedMessageId))
+    } catch (error) {
+      setChatError(error.message || 'The reply could not be sent.')
+    } finally {
+      setChatSending(false)
+    }
+  }
 
   const changeAdminView = (view) => {
     setActiveView(view)
@@ -759,6 +807,9 @@ function AdminWorkspace({ onSignOut }) {
 
   const openMessage = async (message) => {
     setSelectedMessage(message)
+    setChatConversation(null)
+    setChatLoading(true)
+    setChatError('')
     if (message.is_read) return
     try {
       const updated = await setMessageRead(message.id, true)
@@ -918,6 +969,32 @@ function AdminWorkspace({ onSignOut }) {
                       <div className="flex flex-wrap items-start justify-between gap-4 border-b border-line pb-5"><div><p className="text-xs font-semibold uppercase tracking-widest text-neutral-500">{selectedMessage.service_interest}</p><h3 className="mt-2 text-2xl font-semibold">{selectedMessage.name}</h3><a href={`mailto:${selectedMessage.email}`} className="mt-1 block text-sm text-neutral-600 underline underline-offset-4">{selectedMessage.email}</a></div><p className="text-xs text-neutral-500">{formatDate(selectedMessage.created_at)}</p></div>
                       <dl className="grid gap-4 border-y border-line py-5 sm:grid-cols-3"><div><dt className="text-[10px] font-semibold uppercase tracking-widest text-neutral-500">Company</dt><dd className="mt-1 text-sm">{selectedMessage.company}</dd></div><div><dt className="text-[10px] font-semibold uppercase tracking-widest text-neutral-500">Source</dt><dd className="mt-1 text-sm">{isPortalTicket(selectedMessage) ? 'Customer portal ticket' : 'Contact form'}</dd></div><div><dt className="text-[10px] font-semibold uppercase tracking-widest text-neutral-500">Consent</dt><dd className="mt-1 text-sm">{selectedMessage.consent ? 'Provided' : 'Not provided'}</dd></div></dl>
                       <div className="py-6"><p className="text-[10px] font-semibold uppercase tracking-widest text-neutral-500">Message</p><p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-neutral-700">{selectedMessage.message}</p></div>
+                      <section className="border-t border-line py-6">
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                          <p className="text-[10px] font-semibold uppercase tracking-widest text-neutral-500">Live chat with {selectedMessage.name}</p>
+                          <span className="text-[10px] text-neutral-500">Updates automatically</span>
+                        </div>
+                        {chatError && <p role="alert" className="mt-3 text-sm text-red-700">{chatError}</p>}
+                        <div className="mt-3 max-h-72 space-y-3 overflow-y-auto border border-line bg-neutral-50 p-4">
+                          {chatLoading && !chatConversation
+                            ? <p className="text-xs text-neutral-500">Loading conversation...</p>
+                            : chatConversation?.replies?.length
+                              ? chatConversation.replies.map((reply) => (
+                                <div key={reply.id} className={`flex ${reply.author === 'admin' ? 'justify-end' : 'justify-start'}`}>
+                                  <div className={`max-w-[85%] border px-3 py-2 ${reply.author === 'admin' ? 'border-ink bg-ink text-paper' : 'border-line bg-white text-ink'}`}>
+                                    <p className="text-[10px] font-semibold uppercase tracking-wider opacity-70">{reply.name} · {reply.author === 'admin' ? 'You' : 'Customer'}</p>
+                                    <p className="mt-1 whitespace-pre-wrap text-sm leading-6">{reply.body}</p>
+                                    <p className="mt-1 text-[10px] opacity-60">{formatDate(reply.createdAt)}</p>
+                                  </div>
+                                </div>
+                              ))
+                              : <p className="text-xs text-neutral-500">No replies yet. Send the first reply below; the customer can answer after signing in to the portal.</p>}
+                        </div>
+                        <form onSubmit={submitChatReply} className="mt-3 flex flex-col gap-2 sm:flex-row">
+                          <textarea value={chatReply} onChange={(event) => setChatReply(event.target.value)} minLength={20} maxLength={500} rows={2} placeholder="Write a reply (20–500 characters)" aria-label="Chat reply" className="min-h-20 w-full border border-line bg-white px-3 py-2 text-sm outline-none focus:border-ink" />
+                          <button type="submit" disabled={chatSending || chatReply.trim().length < 20} className="h-fit shrink-0 bg-ink px-5 py-3 text-xs font-semibold uppercase tracking-widest text-paper transition hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-50">{chatSending ? 'Sending...' : 'Send reply'}</button>
+                        </form>
+                      </section>
                       <div className="flex flex-wrap gap-2 border-t border-line pt-5"><a href={`mailto:${selectedMessage.email}?subject=${encodeURIComponent(`Re: ${selectedMessage.service_interest}`)}`} className="inline-flex h-10 items-center gap-2 bg-ink px-4 text-xs font-semibold uppercase tracking-wider text-paper transition hover:bg-neutral-700">Reply by email <ArrowTopRightOnSquareIcon className="h-4 w-4" /></a><button type="button" onClick={() => toggleMessageRead(selectedMessage)} className="h-10 border border-line px-4 text-xs font-semibold uppercase tracking-wider transition hover:border-ink">Mark as {selectedMessage.is_read ? 'unread' : 'read'}</button><button type="button" onClick={() => removeMessage(selectedMessage)} className="ml-auto h-10 px-3 text-xs font-semibold uppercase tracking-wider text-red-700 transition hover:bg-red-50">Delete</button></div>
                     </article>
                   ) : <div className="flex h-full min-h-64 flex-col items-center justify-center text-center"><InboxIcon className="h-8 w-8 text-neutral-400" /><p className="mt-3 text-sm font-semibold">Select a message</p><p className="mt-1 text-xs text-neutral-500">Read and manage contact inquiries here.</p></div>}

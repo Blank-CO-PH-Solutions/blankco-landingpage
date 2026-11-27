@@ -90,9 +90,11 @@ async function notifyTicketByEmail(id) {
 }
 
 export async function listMessages() {
+  // Chat replies are stored as tagged messages; keep them out of the inbox list.
   const { data, error } = await requireSupabase()
     .from('messages')
     .select('*')
+    .not('service_interest', 'like', 'CPL chat%')
     .order('created_at', { ascending: false })
 
   if (error) throw error
