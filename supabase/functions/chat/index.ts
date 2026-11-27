@@ -88,8 +88,8 @@ async function authenticate(request: Request, adminClient: ReturnType<typeof cre
 
   const { data: adminRow } = await adminClient
     .from('admin_users')
-    .select('id')
-    .eq('id', data.user.id)
+    .select('user_id')
+    .eq('user_id', data.user.id)
     .maybeSingle()
   if (!adminRow) return null
 
