@@ -32,3 +32,15 @@ export async function sendChatReply(threadId, body) {
   const result = await chatRequest({ action: 'reply', threadId, body })
   return result.reply || null
 }
+
+/** Push notification from the chat function when any conversation gets a reply. */
+export function subscribeChatUpdates(onChatId) {
+  const channel = requireClient()
+    .channel('support-chat')
+    .on('broadcast', { event: 'updated' }, ({ payload }) => {
+      const chatId = payload?.chatId
+      if (chatId) onChatId(chatId)
+    })
+    .subscribe()
+  return () => { void requireClient().removeChannel(channel) }
+}

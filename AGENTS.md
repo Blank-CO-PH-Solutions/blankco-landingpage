@@ -18,8 +18,9 @@ Marketing site for Blank CO PH Solutions: React 19 + Vite + Tailwind 4 + React R
 - `scripts/prerender.mjs` — writes static HTML for public routes, `sitemap.xml`, `404.html`, and the noindex admin shell.
 - `scripts/sync-portal.mjs` — builds `../CPL` with `VITE_BASE_PATH=/portal/` and copies it to `public/portal`; skips when the sibling checkout is absent.
 - `supabase/functions/notify-ticket/` — Edge Function that emails each new `messages` row to `hello@blankcoph.solutions` via Titan SMTP (`smtpout.secureserver.net:465`). Deploy with `supabase functions deploy notify-ticket --use-api`. Reads the row with the service role, only notifies rows younger than 30 minutes, and treats email failure as non-fatal.
-- `supabase/functions/chat/` — shared support chat gateway. Landing admins authenticate with their session + `admin_users`; portal customers send a CPL access token in `x-portal-token`, verified against CPL's public JWKS. Chat replies are tagged `CPL chat · <message id>` rows in the existing `messages` table, so no schema change is needed. `src/data/chat.js` calls this function.
-- The admin inbox hides chat replies via `.not('service_interest', 'like', 'CPL chat%')`. The Admin → Messages detail view polls the active conversation every 3 seconds.
+- `supabase/migrations/202611270001_support_chat.sql` — dedicated `support_chats` / `support_chat_messages` tables with admin RLS, Realtime publication, and a one-time import of the old tagged-message threads.
+- `supabase/functions/chat/` — shared support chat gateway. Landing admins authenticate with their session + `admin_users`; portal customers send a CPL access token in `x-portal-token`, verified against CPL's public JWKS. It reads/writes the dedicated chat tables and broadcasts a `support-chat` Realtime event with only the chat id after each reply. `src/data/chat.js` calls the function and subscribes to those events.
+- The admin inbox hides legacy tagged chat replies via `.not('service_interest', 'like', 'CPL chat%')`. New replies never enter `messages`.
 
 ## Behaviors to preserve
 

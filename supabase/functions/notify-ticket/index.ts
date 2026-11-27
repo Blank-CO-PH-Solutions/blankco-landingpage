@@ -129,6 +129,32 @@ async function sendMail(message: MessageRow) {
   }
 }
 
+/** Every new inbox message becomes the first message of a support chat. */
+async function ensureChat(admin: ReturnType<typeof createClient>, message: MessageRow) {
+  const isPortal = message.service_interest.startsWith('CPL support')
+  const category = isPortal ? (message.service_interest.split(' · ')[1] || 'Other') : 'Other'
+
+  await admin.from('support_chats').upsert({
+    id: message.id,
+    customer_email: message.email,
+    customer_name: message.name,
+    subject: message.service_interest,
+    category,
+    source: isPortal ? 'ticket' : 'contact',
+    created_at: message.created_at,
+    updated_at: message.created_at,
+  }, { onConflict: 'id', ignoreDuplicates: true })
+
+  await admin.from('support_chat_messages').upsert({
+    id: message.id,
+    chat_id: message.id,
+    author: 'customer',
+    author_name: message.name,
+    body: message.message,
+    created_at: message.created_at,
+  }, { onConflict: 'id', ignoreDuplicates: true })
+}
+
 Deno.serve(async (request) => {
   if (request.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
   if (request.method !== 'POST') return json({ error: 'Method not allowed' }, 405)
@@ -156,6 +182,13 @@ Deno.serve(async (request) => {
 
   if (error) return json({ error: error.message }, 500)
   if (!data) return json({ error: 'Message not found' }, 404)
+
+  try {
+    await ensureChat(admin, data as MessageRow)
+  } catch (chatError) {
+    console.error('Could not create support chat', chatError)
+    return json({ error: 'The chat could not be created for this ticket' }, 500)
+  }
 
   const ageMinutes = (Date.now() - new Date(data.created_at).getTime()) / 60000
   if (ageMinutes > MAX_AGE_MINUTES) {

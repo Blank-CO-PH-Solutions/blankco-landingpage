@@ -15,7 +15,7 @@ import {
 } from '@heroicons/react/24/outline'
 import { Link } from 'react-router-dom'
 import { deleteMessage, isPortalTicket, listMessages, setMessageRead } from '../data/messages'
-import { getChatThread, sendChatReply } from '../data/chat'
+import { getChatThread, sendChatReply, subscribeChatUpdates } from '../data/chat'
 import { deleteProject, listProjects, saveProject as saveProjectRecord, updateProject } from '../data/projects'
 import { fetchGithubProfile, githubRepositoryToProject, listGithubRepositories } from '../data/github'
 import { deleteTeamMember, getGithubAvatarUrl, listTeamMembers, saveTeamMember, uploadTeamMemberAvatar } from '../data/teamMembers'
@@ -669,17 +669,19 @@ function AdminWorkspace({ onSignOut }) {
       }
     }
     void load()
-    const interval = window.setInterval(() => void load(), 3000)
+    const unsubscribe = subscribeChatUpdates((chatId) => {
+      if (chatId === selectedMessageId) void load()
+    })
     return () => {
       active = false
-      window.clearInterval(interval)
+      unsubscribe()
     }
   }, [selectedMessageId])
 
   const submitChatReply = async (event) => {
     event.preventDefault()
-    if (!selectedMessageId || chatReply.trim().length < 20) {
-      setChatError('Replies must be at least 20 characters.')
+    if (!selectedMessageId || !chatReply.trim() || chatReply.trim().length > 2000) {
+      setChatError('Replies must be between 1 and 2000 characters.')
       return
     }
     setChatSending(true)
@@ -991,8 +993,8 @@ function AdminWorkspace({ onSignOut }) {
                               : <p className="text-xs text-neutral-500">No replies yet. Send the first reply below; the customer can answer after signing in to the portal.</p>}
                         </div>
                         <form onSubmit={submitChatReply} className="mt-3 flex flex-col gap-2 sm:flex-row">
-                          <textarea value={chatReply} onChange={(event) => setChatReply(event.target.value)} minLength={20} maxLength={500} rows={2} placeholder="Write a reply (20–500 characters)" aria-label="Chat reply" className="min-h-20 w-full border border-line bg-white px-3 py-2 text-sm outline-none focus:border-ink" />
-                          <button type="submit" disabled={chatSending || chatReply.trim().length < 20} className="h-fit shrink-0 bg-ink px-5 py-3 text-xs font-semibold uppercase tracking-widest text-paper transition hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-50">{chatSending ? 'Sending...' : 'Send reply'}</button>
+                          <textarea value={chatReply} onChange={(event) => setChatReply(event.target.value)} maxLength={2000} rows={2} placeholder="Write a reply" aria-label="Chat reply" className="min-h-20 w-full border border-line bg-white px-3 py-2 text-sm outline-none focus:border-ink" />
+                          <button type="submit" disabled={chatSending || !chatReply.trim()} className="h-fit shrink-0 bg-ink px-5 py-3 text-xs font-semibold uppercase tracking-widest text-paper transition hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-50">{chatSending ? 'Sending...' : 'Send reply'}</button>
                         </form>
                       </section>
                       <div className="flex flex-wrap gap-2 border-t border-line pt-5"><a href={`mailto:${selectedMessage.email}?subject=${encodeURIComponent(`Re: ${selectedMessage.service_interest}`)}`} className="inline-flex h-10 items-center gap-2 bg-ink px-4 text-xs font-semibold uppercase tracking-wider text-paper transition hover:bg-neutral-700">Reply by email <ArrowTopRightOnSquareIcon className="h-4 w-4" /></a><button type="button" onClick={() => toggleMessageRead(selectedMessage)} className="h-10 border border-line px-4 text-xs font-semibold uppercase tracking-wider transition hover:border-ink">Mark as {selectedMessage.is_read ? 'unread' : 'read'}</button><button type="button" onClick={() => removeMessage(selectedMessage)} className="ml-auto h-10 px-3 text-xs font-semibold uppercase tracking-wider text-red-700 transition hover:bg-red-50">Delete</button></div>
